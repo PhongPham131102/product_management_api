@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -19,13 +20,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-app.use(errorHandler);  
+app.use(errorHandler);
 
 
 async function startServer() {
   try {
     await connectToDatabase();
-    
+
     app.listen(PORT, () => {
       logger.info(`🚀 Server is running on port ${PORT}`);
     });

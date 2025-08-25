@@ -27,7 +27,7 @@ const userSchema = new Schema<IUser>(
     password: {
       type: String,
       minlength: [6, "Password must be at least 6 characters long"],
-      select: false, 
+      select: false,
     },
     name: {
       type: String,
@@ -41,7 +41,7 @@ const userSchema = new Schema<IUser>(
       trim: true,
       lowercase: true,
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email"],
-      sparse: true, 
+      sparse: true,
     },
     role: {
       type: Types.ObjectId,
@@ -55,11 +55,11 @@ const userSchema = new Schema<IUser>(
     refresh_token: {
       type: String,
       default: "",
-      select: false, 
+      select: false,
     },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
 
