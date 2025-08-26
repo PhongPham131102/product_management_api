@@ -1,12 +1,15 @@
+import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { Role } from "../models/role.model";
 import { Permission } from "../models/permission.model";
 import { adminRole, roleDefault } from "../constants/role.constant";
+import { Logger } from "../utils/logger.util";
+import { StatusResponse } from "../common/status-response.common";
 
-
-export class RoleService {  
+export class RoleService {
   private roleModel = Role;
   private permissionModel = Permission;
+  private logger = new Logger('RoleService');
 
   async initPackageEntity() {
     try {
@@ -19,7 +22,7 @@ export class RoleService {
         }
       }
     } catch (error) {
-      console.error("❌ Không thể khởi tạo data cho role entity", error);
+      this.logger.error("❌ Không thể khởi tạo data cho role entity", error);
     }
   }
 
@@ -37,83 +40,156 @@ export class RoleService {
     return this.roleModel.findById(new Types.ObjectId(id));
   }
 
-  async create(createRoleDto: { name: string }) {
-    const { name } = createRoleDto;
-    const checkRole = await this.roleModel.findOne({ name });
-    if (checkRole) {
-      throw { status: 400, message: "Already Exist Role" };
-    }
+  async create(req: Request, res: Response) {
+    try {
+      const { name } = req.body;
+      const checkRole = await this.roleModel.findOne({ name });
+      if (checkRole) {
+        return res.status(400).json({
+          status: StatusResponse.FAIL,
+          message: "Already Exist Role"
+        });
+      }
 
-    const role = await this.roleModel.create(createRoleDto);
-    return {
-      status: "success",
-      message: "Create Role Success",
-      data: role,
-    };
+      const role = await this.roleModel.create({ name });
+      this.logger.info(`Role created: ${role.name}`);
+
+      return res.status(201).json({
+        status: StatusResponse.SUCCESS,
+        message: "Create Role Success",
+        data: role,
+      });
+    } catch (error) {
+      this.logger.error('Create role error:', error);
+      return res.status(500).json({
+        status: StatusResponse.FAIL,
+        message: 'Internal server error'
+      });
+    }
   }
 
-  async update(id: string, updateRoleDto: { name: string }) {
-    if (id === adminRole) {
-      throw { status: 403, message: `You Don't Have Permission To Change Admin Role` };
+  async update(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { name } = req.body;
+
+      if (id === adminRole) {
+        return res.status(403).json({
+          status: StatusResponse.FORBIDDEN,
+          message: `You Don't Have Permission To Change Admin Role`
+        });
+      }
+
+      const role = await this.roleModel.findById(new Types.ObjectId(id));
+      if (!role) {
+        return res.status(400).json({
+          status: StatusResponse.NOTFOUND,
+          message: "Role By Id Is Not Exists"
+        });
+      }
+
+      const checkName = await this.roleModel.findOne({ name, _id: { $ne: id } });
+      if (checkName) {
+        return res.status(400).json({
+          status: StatusResponse.FAIL,
+          message: "Role Name Already Exists"
+        });
+      }
+
+      role.name = name;
+      await role.save();
+
+      this.logger.info(`Role updated: ${role.name}`);
+
+      return res.json({
+        status: StatusResponse.SUCCESS,
+        message: "Update Role Success",
+        data: role,
+      });
+    } catch (error) {
+      this.logger.error('Update role error:', error);
+      return res.status(500).json({
+        status: StatusResponse.FAIL,
+        message: 'Internal server error'
+      });
     }
-
-    const role = await this.roleModel.findById(new Types.ObjectId(id));
-    if (!role) {
-      throw { status: 400, message: "Role By Id Is Not Exists" };
-    }
-
-    const checkName = await this.roleModel.findOne({ name: updateRoleDto.name });
-    if (checkName) {
-      throw { status: 400, message: "Role Name Already Exists" };
-    }
-
-    role.name = updateRoleDto.name;
-    await role.save();
-
-    return {
-      status: "success",
-      message: "Update Role Success",
-      data: role,
-    };
   }
 
-  async delete(id: string) {
-    if (id === adminRole) {
-      throw { status: 403, message: "You Don't Have Permission To Delete Admin Role" };
+  async delete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if (id === adminRole) {
+        return res.status(403).json({
+          status: StatusResponse.FORBIDDEN,
+          message: "You Don't Have Permission To Delete Admin Role"
+        });
+      }
+
+      const role = await this.roleModel.findByIdAndDelete(new Types.ObjectId(id));
+      if (!role) {
+        return res.status(400).json({
+          status: StatusResponse.NOTFOUND,
+          message: "Role By Id Not Exists"
+        });
+      }
+
+      await this.permissionModel.deleteMany({ role: new Types.ObjectId(id) });
+
+      this.logger.info(`Role deleted: ${role.name}`);
+
+      return res.json({
+        status: StatusResponse.SUCCESS,
+        message: "Role Deleted Successfully!",
+      });
+    } catch (error) {
+      this.logger.error('Delete role error:', error);
+      return res.status(500).json({
+        status: StatusResponse.FAIL,
+        message: 'Internal server error'
+      });
     }
-
-    const role = await this.roleModel.findByIdAndDelete(new Types.ObjectId(id));
-    if (!role) {
-      throw { status: 400, message: "Role By Id Not Exists" };
-    }
-
-    await this.permissionModel.deleteMany({ role: new Types.ObjectId(id) });
-
-    return {
-      status: "success",
-      message: "Role Deleted Successfully!",
-    };
   }
 
-  async getById(id: string) {
-    const role = await this.roleModel.findById(new Types.ObjectId(id));
-    if (!role) {
-      throw { status: 400, message: "Role By Id Is Not Exists" };
-    }
+  async getById(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const role = await this.roleModel.findById(new Types.ObjectId(id));
+      if (!role) {
+        return res.status(400).json({
+          status: StatusResponse.NOTFOUND,
+          message: "Role By Id Is Not Exists"
+        });
+      }
 
-    return {
-      status: "success",
-      message: "Get Role By Id Success",
-      data: role,
-    };
+      return res.json({
+        status: StatusResponse.SUCCESS,
+        message: "Get Role By Id Success",
+        data: role,
+      });
+    } catch (error) {
+      this.logger.error('Get role by ID error:', error);
+      return res.status(500).json({
+        status: StatusResponse.FAIL,
+        message: 'Internal server error'
+      });
+    }
   }
 
-  async getAll() {
-    const roles = await this.roleModel.find();
-    return {
-      status: "success",
-      message: "Get List Role successfully",
-      data: roles,
-    };
+  async getAll(req: Request, res: Response) {
+    try {
+      const roles = await this.roleModel.find();
+      return res.json({
+        status: StatusResponse.SUCCESS,
+        message: "Get List Role successfully",
+        data: roles,
+      });
+    } catch (error) {
+      this.logger.error('Get all roles error:', error);
+      return res.status(500).json({
+        status: StatusResponse.FAIL,
+        message: 'Internal server error'
+      });
+    }
   }
 }

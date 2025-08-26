@@ -19,11 +19,9 @@ const roleSchema = new Schema<IRole>(
     },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
-
-roleSchema.index({ name: 1 });
 
 export const Role = mongoose.model<IRole>("Role", roleSchema);
 

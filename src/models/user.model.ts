@@ -63,10 +63,6 @@ const userSchema = new Schema<IUser>(
   }
 );
 
-// Indexes cho performance
-userSchema.index({ username: 1 });
-userSchema.index({ email: 1 });
-
 export const User = mongoose.model<IUser>("User", userSchema);
 
 export type UserDocument = IUser;

@@ -9,10 +9,9 @@ const logger = new Logger('DatabaseConfig');
 export const databaseConfig = {
   mongoUri: process.env['MONGO_URI'] || 'mongodb://localhost:27017/product_management',
   options: {
-    maxPoolSize: 10, 
-    serverSelectionTimeoutMS: 5000, 
-    socketTimeoutMS: 45000, 
-    bufferMaxEntries: 0 
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000
   }
 };
 
