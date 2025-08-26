@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { Logger } from './utils/logger.util';
+import { loggerStream } from './utils/logger.util';
 import { connectToDatabase } from './config/database.config';
 import { InitDataService } from './services/init-data.service';
 import { errorHandler } from './middleware/error.middleware';
@@ -21,15 +22,15 @@ const PORT = process.env['PORT'] || 3000;
 
 app.use(helmet());
 app.use(cors());
-app.use(morgan('combined'));
+app.use(morgan('combined', { stream: loggerStream }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/roles', roleRoutes);
-app.use('/api/permissions', permissionRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/roles', roleRoutes);
+app.use('/api/v1/permissions', permissionRoutes);
 
 app.use(errorHandler);
 
@@ -43,11 +44,6 @@ async function startServer() {
 
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);
-      logger.debug(`Server is running on port ${PORT}`);
-      logger.warn(`Server is running on port ${PORT}`);
-      logger.error(`Server is running on port ${PORT}`);
-      logger.log(`Server is running on port ${PORT}`);
-      logger.verbose(`Server is running on port ${PORT}`);
     });
   } catch (error) {
     logger.error('Failed to start server:', error);
