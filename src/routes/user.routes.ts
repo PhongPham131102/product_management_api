@@ -8,12 +8,12 @@ const router = Router();
 const userController = new UserController();
 
 // Public routes
-router.get('/profile', authenticateToken, userController.getProfile);
+router.get('/profile', authenticateToken, (req, res) => userController.getProfile(req, res));
 
 // Protected routes (admin only)
-router.get('/', authenticateToken, authorizeRoles('Supper Admin'), userController.getAllUsers);
-router.get('/:id', authenticateToken, authorizeRoles('Supper Admin'), userController.getUserById);
-router.put('/:id', authenticateToken, authorizeRoles('Supper Admin'), validateDto(UpdateUserDto), userController.updateUser);
-router.delete('/:id', authenticateToken, authorizeRoles('Supper Admin'), userController.deleteUser);
+router.get('/', authenticateToken, authorizeRoles('Supper Admin'), (req, res) => userController.getAllUsers(req, res));
+router.get('/:id', authenticateToken, authorizeRoles('Supper Admin'), (req, res) => userController.getUserById(req, res));
+router.put('/:id', authenticateToken, authorizeRoles('Supper Admin'), validateDto(UpdateUserDto), (req, res) => userController.updateUser(req, res));
+router.delete('/:id', authenticateToken, authorizeRoles('Supper Admin'), (req, res) => userController.deleteUser(req, res));
 
 export default router;

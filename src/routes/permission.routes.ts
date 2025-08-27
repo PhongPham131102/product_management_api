@@ -8,14 +8,14 @@ const router = Router();
 const permissionController = new PermissionController();
 
 // Protected routes (admin only)
-router.get('/', authenticateToken, authorizeRoles('Supper Admin'), permissionController.getAllPermissions);
-router.get('/role/:roleId', authenticateToken, authorizeRoles('Supper Admin'), permissionController.getPermissionsByRole);
-router.post('/', authenticateToken, authorizeRoles('Supper Admin'), validateDto(CreatePermissionDto), permissionController.createPermission);
-router.put('/:id', authenticateToken, authorizeRoles('Supper Admin'), validateDto(UpdatePermissionDto), permissionController.updatePermission);
-router.delete('/:id', authenticateToken, authorizeRoles('Supper Admin'), permissionController.deletePermission);
+router.get('/', authenticateToken, authorizeRoles('Supper Admin'), (req, res) => permissionController.getAllPermissions(req, res));
+router.get('/role/:roleId', authenticateToken, authorizeRoles('Supper Admin'), (req, res) => permissionController.getPermissionsByRole(req, res));
+router.post('/', authenticateToken, authorizeRoles('Supper Admin'), validateDto(CreatePermissionDto), (req, res) => permissionController.createPermission(req, res));
+router.put('/:id', authenticateToken, authorizeRoles('Supper Admin'), validateDto(UpdatePermissionDto), (req, res) => permissionController.updatePermission(req, res));
+router.delete('/:id', authenticateToken, authorizeRoles('Supper Admin'), (req, res) => permissionController.deletePermission(req, res));
 
 // Utility routes
-router.get('/actions/available', authenticateToken, authorizeRoles('Supper Admin'), permissionController.getAvailableActions);
-router.get('/subjects/available', authenticateToken, authorizeRoles('Supper Admin'), permissionController.getAvailableSubjects);
+router.get('/actions/available', authenticateToken, authorizeRoles('Supper Admin'), (req, res) => permissionController.getAvailableActions(req, res));
+router.get('/subjects/available', authenticateToken, authorizeRoles('Supper Admin'), (req, res) => permissionController.getAvailableSubjects(req, res));
 
 export default router;
