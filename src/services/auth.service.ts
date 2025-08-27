@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model';
 import { Role } from '../models/role.model';
 import { Logger } from '../utils/logger.util';
+import { StatusResponse } from '../common/status-response.common';
 
 export class AuthService {
     private logger = new Logger('AuthService');
@@ -11,22 +12,29 @@ export class AuthService {
         try {
             const { email, password, username, name } = userData;
 
-            // Check if user already exists
             const existingUser = await User.findOne({
                 $or: [{ email }, { username }]
             });
 
             if (existingUser) {
                 throw {
-                    status: 400,
+                    status_code: 400,
+                    status: StatusResponse.EXISTS_USERNAME,
                     message: 'User already exists'
                 };
             }
+            const existingEmail = await User.findOne({ email });
+            if (existingEmail) {
+                throw {
+                    status_code: 400,
+                    status: StatusResponse.EXISTS_EMAIL,
+                    message: 'Email already exists'
+                };
+            }
 
-            // Hash password
             const hashedPassword = await bcrypt.hash(password, 12);
 
-            // Get default role
+
             const defaultRole = await Role.findOne({ name: 'user' });
             if (!defaultRole) {
                 throw {
@@ -43,8 +51,6 @@ export class AuthService {
                 name,
                 role: defaultRole._id
             });
-
-            this.logger.info(`User registered: ${user.username}`);
 
             return {
                 id: user._id,

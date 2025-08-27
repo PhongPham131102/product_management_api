@@ -45,7 +45,7 @@ const userSchema = new Schema<IUser>(
     },
     role: {
       type: Types.ObjectId,
-      ref: Role.name,
+      ref: 'Role',
       required: [true, "Role is required"],
     },
     isDelete: {
