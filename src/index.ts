@@ -8,7 +8,7 @@ import { Logger } from './utils/logger.util';
 import { loggerStream } from './utils/logger.util';
 import { connectToDatabase } from './config/database.config';
 import { InitDataService } from './services/init-data.service';
-import { errorHandler } from './middleware/error.middleware';
+import { errorMiddleware } from './middleware/error.middleware';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import roleRoutes from './routes/role.routes';
@@ -32,7 +32,7 @@ app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/roles', roleRoutes);
 app.use('/api/v1/permissions', permissionRoutes);
 
-app.use(errorHandler);
+app.use(errorMiddleware);
 
 async function startServer() {
   try {

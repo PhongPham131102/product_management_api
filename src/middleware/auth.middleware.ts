@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model';
 import { Logger } from '../utils/logger.util';
+import { StatusResponse } from '../common/status-response.common';
+
 
 interface AuthRequest extends Request {
     user?: any;
@@ -21,6 +23,7 @@ export const authenticateToken = async (
         if (!token) {
             return res.status(401).json({
                 status: 'FAIL',
+                error_code: StatusResponse.ACCESS_TOKEN_REQUIRED,
                 message: 'Access token is required'
             });
         }
@@ -34,6 +37,7 @@ export const authenticateToken = async (
         if (!user) {
             return res.status(401).json({
                 status: 'FAIL',
+                error_code: StatusResponse.USER_NOT_FOUND,
                 message: 'User not found'
             });
         }
@@ -44,6 +48,7 @@ export const authenticateToken = async (
         logger.error('Token verification error:', error);
         return res.status(403).json({
             status: 'FAIL',
+            error_code: StatusResponse.INVALID_TOKEN,
             message: 'Invalid or expired token'
         });
     }
@@ -54,6 +59,7 @@ export const authorizeRoles = (...roles: string[]) => {
         if (!req.user) {
             res.status(401).json({
                 status: 'FAIL',
+                error_code: StatusResponse.INVALID_TOKEN,
                 message: 'Authentication required'
             });
             return;
@@ -62,6 +68,7 @@ export const authorizeRoles = (...roles: string[]) => {
         if (!roles.includes(req.user.role.name)) {
             res.status(403).json({
                 status: 'FAIL',
+                error_code: StatusResponse.INVALID_TOKEN,
                 message: 'Insufficient permissions'
             });
             return;

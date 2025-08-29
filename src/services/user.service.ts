@@ -61,7 +61,7 @@ export class UserService {
             }
 
             user.name = name || user.name;
-            user.email = email || user.email;
+            user.email = email || user.email || '';
             await user.save();
 
             this.logger.info(`User updated: ${user.username}`);

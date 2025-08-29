@@ -69,9 +69,9 @@ function colorStatus(statusNum: number) {
   return c.magenta + statusNum + c.reset; // 5xx
 }
 
-function nestHeader(level = 'LOG') {
+function nestHeader(level = '') {
   const ts = new Date().toLocaleString();
-  return `[ExpressJS] ${process.pid}  - ${ts}   ${level}`;
+  return `[ExpressJS] ${process.pid}  - ${ts}${level ? `   ${level}` : ''}`;
 }
 export const loggerStream = {
   write: (line: string) => {
@@ -104,7 +104,7 @@ export const loggerStream = {
       if (e.userAgent && e.userAgent !== '-') parts.push(`"${e.userAgent}"`);
       if (e.requestId && e.requestId !== '-') parts.push(`${c.gray}rid=${e.requestId}${c.reset}`);
 
-      const formatted = `${nestHeader('LOG')} ${parts.join(' ')}`;
+      const formatted = `${nestHeader()} ${parts.join(' ')}`;
 
       console.log(formatted);
 
@@ -123,7 +123,8 @@ export const loggerStream = {
         timestamp: new Date().toISOString(),
       });
     } catch {
-      console.log(`${nestHeader('LOG')} [HTTP] ${message}`);
+      const cleaned = message.replace(/\s\[[^\]]+\]\s/, ' ');
+      console.log(`${nestHeader()} [HTTP] ${cleaned}`);
     }
   },
 };

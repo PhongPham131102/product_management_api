@@ -1,4 +1,4 @@
-import { RoleService } from '../controllers/role.controller';
+import { RoleController } from '../controllers/role.controller';
 import { User } from '../models/user.model';
 import { Role } from '../models/role.model';
 import { Permission } from '../models/permission.model';
@@ -34,7 +34,7 @@ export class InitDataService {
 
     private async initializeRoles(): Promise<void> {
         try {
-            const roleService = new RoleService();
+            const roleService = new RoleController();
             await roleService.initPackageEntity();
             this.logger.info('Roles initialized successfully');
         } catch (error) {

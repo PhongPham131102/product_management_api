@@ -18,16 +18,16 @@ export class AuthService {
 
             if (existingUser) {
                 throw {
-                    status_code: 400,
-                    status: StatusResponse.EXISTS_USERNAME,
+                    status: 400,
+                    status_response: StatusResponse.EXISTS_USERNAME,
                     message: 'User already exists'
                 };
             }
             const existingEmail = await User.findOne({ email });
             if (existingEmail) {
                 throw {
-                    status_code: 400,
-                    status: StatusResponse.EXISTS_EMAIL,
+                    status: 400,
+                    status_response: StatusResponse.EXISTS_EMAIL,
                     message: 'Email already exists'
                 };
             }
