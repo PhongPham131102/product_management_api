@@ -51,7 +51,7 @@ export class RoleService {
             });
         }
         const role = await this.roleModel.create({ name });
-        this.logger.info(`Role created: ${role.name}`);
+        this.logger.verbose(`Role created: ${role.name}`);
         return role;
     }
 
@@ -84,7 +84,7 @@ export class RoleService {
 
         role.name = name;
         await role.save();
-        this.logger.info(`Role updated: ${role.name}`);
+        this.logger.verbose(`Role updated: ${role.name}`);
         return role;
     }
 
@@ -107,7 +107,7 @@ export class RoleService {
         }
 
         await this.permissionModel.deleteMany({ role: new Types.ObjectId(id) });
-        this.logger.info(`Role deleted: ${role.name}`);
+        this.logger.verbose(`Role deleted: ${role.name}`);
         return true;
     }
 

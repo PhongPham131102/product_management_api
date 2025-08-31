@@ -11,7 +11,7 @@ export class InitDataService {
 
     async initializeDefaultData(): Promise<void> {
         try {
-            this.logger.info('Starting to initialize default data...');
+            this.logger.verbose('Starting to initialize default data...');
 
             // Initialize roles
             await this.initializeRoles();
@@ -25,7 +25,7 @@ export class InitDataService {
             // Create default user role if not exists
             await this.createDefaultUserRole();
 
-            this.logger.info('Default data initialization completed successfully');
+            this.logger.verbose('Default data initialization completed successfully');
         } catch (error) {
             this.logger.error('Error initializing default data:', error);
             throw error;
@@ -36,7 +36,7 @@ export class InitDataService {
         try {
             const roleService = new RoleController();
             await roleService.initPackageEntity();
-            this.logger.info('Roles initialized successfully');
+            this.logger.verbose('Roles initialized successfully');
         } catch (error) {
             this.logger.error('Error initializing roles:', error);
             throw error;
@@ -53,10 +53,10 @@ export class InitDataService {
                         ...userData,
                         password: hashedPassword
                     });
-                    this.logger.info(`Default user created: ${userData.username}`);
+                    this.logger.verbose(`Default user created: ${userData.username}`);
                 }
             }
-            this.logger.info('Users initialized successfully');
+            this.logger.verbose('Users initialized successfully');
         } catch (error) {
             this.logger.error('Error initializing users:', error);
             throw error;
@@ -69,10 +69,10 @@ export class InitDataService {
                 const existingPermission = await Permission.findById(permissionData._id);
                 if (!existingPermission) {
                     await Permission.create(permissionData);
-                    this.logger.info(`Default permission created for role: ${permissionData.role}`);
+                    this.logger.verbose(`Default permission created for role: ${permissionData.role}`);
                 }
             }
-            this.logger.info('Permissions initialized successfully');
+            this.logger.verbose('Permissions initialized successfully');
         } catch (error) {
             this.logger.error('Error initializing permissions:', error);
             throw error;
@@ -87,7 +87,7 @@ export class InitDataService {
                     name: 'user',
                     _id: '65a0a995aa7ea10ac4d16962'
                 });
-                this.logger.info('Default user role created');
+                this.logger.verbose('Default user role created');
             }
         } catch (error) {
             this.logger.error('Error creating default user role:', error);

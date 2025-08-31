@@ -43,7 +43,7 @@ async function startServer() {
     await initDataService.initializeDefaultData();
 
     app.listen(PORT, () => {
-      logger.info(`Server is running on port ${PORT}`);
+      logger.verbose(`Server is running on port ${PORT}`);
     });
   } catch (error) {
     logger.error('Failed to start server:', error);
@@ -53,12 +53,12 @@ async function startServer() {
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  logger.info('SIGTERM received, shutting down gracefully');
+  logger.verbose('SIGTERM received, shutting down gracefully');
   process.exit(0);
 });
 
 process.on('SIGINT', () => {
-  logger.info('SIGINT received, shutting down gracefully');
+  logger.verbose('SIGINT received, shutting down gracefully');
   process.exit(0);
 });
 

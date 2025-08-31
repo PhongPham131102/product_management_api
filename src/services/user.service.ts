@@ -64,7 +64,7 @@ export class UserService {
             user.email = email || user.email || '';
             await user.save();
 
-            this.logger.info(`User updated: ${user.username}`);
+            this.logger.verbose(`User updated: ${user.username}`);
 
             return {
                 id: user._id,
@@ -93,7 +93,7 @@ export class UserService {
             user.isDelete = true;
             await user.save();
 
-            this.logger.info(`User deleted: ${user.username}`);
+            this.logger.verbose(`User deleted: ${user.username}`);
 
             return true;
         } catch (error) {

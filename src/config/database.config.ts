@@ -17,9 +17,9 @@ export const databaseConfig = {
 
 export const connectToDatabase = async (): Promise<void> => {
   try {
-    logger.info('Connecting to MongoDB...');
+    logger.verbose('Connecting to MongoDB...');
     await mongoose.connect(databaseConfig.mongoUri, databaseConfig.options);
-    logger.info('Successfully connected to MongoDB');
+    logger.verbose('Successfully connected to MongoDB');
   } catch (error) {
     logger.error('Error connecting to MongoDB:', error);
     process.exit(1);
@@ -29,7 +29,7 @@ export const connectToDatabase = async (): Promise<void> => {
 export const disconnectFromDatabase = async (): Promise<void> => {
   try {
     await mongoose.disconnect();
-    logger.info('Disconnected from MongoDB');
+    logger.verbose('Disconnected from MongoDB');
   } catch (error) {
     logger.error('Error disconnecting from MongoDB:', error);
   }

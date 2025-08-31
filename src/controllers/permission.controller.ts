@@ -80,7 +80,7 @@ export class PermissionController {
 
             await permission.populate('role', 'name');
 
-            this.logger.info(`Permission created for role: ${role.name}`);
+            this.logger.verbose(`Permission created for role: ${role.name}`);
 
             res.status(201).json({
                 status: StatusResponse.SUCCESS,
@@ -113,7 +113,7 @@ export class PermissionController {
             await permission.save();
             await permission.populate('role', 'name');
 
-            this.logger.info(`Permission updated: ${permission._id}`);
+            this.logger.verbose(`Permission updated: ${permission._id}`);
 
             res.json({
                 status: StatusResponse.SUCCESS,
@@ -141,7 +141,7 @@ export class PermissionController {
                 });
             }
 
-            this.logger.info(`Permission deleted: ${id}`);
+            this.logger.verbose(`Permission deleted: ${id}`);
 
             res.json({
                 status: StatusResponse.SUCCESS,

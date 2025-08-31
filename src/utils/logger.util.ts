@@ -106,25 +106,26 @@ export const loggerStream = {
 
       const formatted = `${nestHeader()} ${parts.join(' ')}`;
 
-      console.log(formatted);
-
-      // file (JSON)
-      loggerInstance.info({
+      // Sử dụng logger instance để có màu sắc
+      loggerInstance.info(formatted, {
         context: 'HTTP',
-        message: `${e.method} ${e.url}`,
+        method: e.method,
+        url: e.url,
         status: e.status,
-        responseTimeMs: Number(e.responseTime),
+        responseTime: e.responseTime,
         contentLength: e.contentLength,
         httpVersion: e.httpVersion,
         remoteAddr: e.remoteAddr,
         referrer: e.referrer,
         userAgent: e.userAgent,
         requestId: e.requestId,
-        timestamp: new Date().toISOString(),
       });
     } catch {
       const cleaned = message.replace(/\s\[[^\]]+\]\s/, ' ');
-      console.log(`${nestHeader()} [HTTP] ${cleaned}`);
+      // Sử dụng logger instance để có màu sắc
+      loggerInstance.info(`${nestHeader()} [HTTP] ${cleaned}`, {
+        context: 'HTTP'
+      });
     }
   },
 };

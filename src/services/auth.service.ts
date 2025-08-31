@@ -103,7 +103,7 @@ export class AuthService {
             user.refresh_token = refreshToken;
             await user.save();
 
-            this.logger.info(`User logged in: ${user.username}`);
+            this.logger.verbose(`User logged in: ${user.username}`);
 
             return {
                 accessToken,
@@ -137,7 +137,7 @@ export class AuthService {
                 { refresh_token: '' }
             );
 
-            this.logger.info('User logged out');
+            this.logger.verbose('User logged out');
             return true;
         } catch (error) {
             this.logger.error('Logout error:', error);
