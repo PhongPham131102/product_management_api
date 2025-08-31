@@ -18,7 +18,6 @@ export class AuthController {
                 data: userData
             });
         } catch (error: any) {
-            this.logger.error('Registration error:', error);
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
@@ -37,7 +36,6 @@ export class AuthController {
                 data: loginData
             });
         } catch (error: any) {
-            this.logger.error('Login error:', error);
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
@@ -55,7 +53,6 @@ export class AuthController {
                 message: 'Logout successful'
             });
         } catch (error: any) {
-            this.logger.error('Logout error:', error);
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
@@ -74,7 +71,6 @@ export class AuthController {
                 data: tokenData
             });
         } catch (error: any) {
-            this.logger.error('Refresh token error:', error);
             res.status(error.status || 401).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Invalid refresh token'

@@ -18,7 +18,7 @@ export class PermissionController {
                 data: permissions
             });
         } catch (error) {
-            this.logger.error('Get all permissions error:', error);
+            
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -38,7 +38,6 @@ export class PermissionController {
                 data: permissions
             });
         } catch (error) {
-            this.logger.error('Get permissions by role error:', error);
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -88,7 +87,6 @@ export class PermissionController {
                 data: permission
             });
         } catch (error) {
-            this.logger.error('Create permission error:', error);
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -121,7 +119,6 @@ export class PermissionController {
                 data: permission
             });
         } catch (error) {
-            this.logger.error('Update permission error:', error);
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -148,7 +145,6 @@ export class PermissionController {
                 message: 'Permission deleted successfully'
             });
         } catch (error) {
-            this.logger.error('Delete permission error:', error);
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -164,7 +160,6 @@ export class PermissionController {
                 data: Object.values(ActionEnum)
             });
         } catch (error) {
-            this.logger.error('Get available actions error:', error);
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -180,7 +175,6 @@ export class PermissionController {
                 data: Object.values(SubjectEnum)
             });
         } catch (error) {
-            this.logger.error('Get available subjects error:', error);
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'

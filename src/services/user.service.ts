@@ -12,7 +12,6 @@ export class UserService {
 
             return users;
         } catch (error) {
-            this.logger.error('Get all users error:', error);
             throw error;
         }
     }
@@ -32,7 +31,6 @@ export class UserService {
 
             return user;
         } catch (error) {
-            this.logger.error('Get user by ID error:', error);
             throw error;
         }
     }
@@ -73,7 +71,6 @@ export class UserService {
                 name: user.name
             };
         } catch (error) {
-            this.logger.error('Update user error:', error);
             throw error;
         }
     }
@@ -97,7 +94,6 @@ export class UserService {
 
             return true;
         } catch (error) {
-            this.logger.error('Delete user error:', error);
             throw error;
         }
     }
@@ -117,7 +113,6 @@ export class UserService {
 
             return user;
         } catch (error) {
-            this.logger.error('Get profile error:', error);
             throw error;
         }
     }

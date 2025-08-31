@@ -17,7 +17,6 @@ export class UserController {
                 data: users
             });
         } catch (error: any) {
-            this.logger.error('Get all users error:', error);
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
@@ -43,7 +42,6 @@ export class UserController {
                 data: user
             });
         } catch (error: any) {
-            this.logger.error('Get user by ID error:', error);
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
@@ -71,7 +69,6 @@ export class UserController {
                 data: userData
             });
         } catch (error: any) {
-            this.logger.error('Update user error:', error);
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
@@ -97,7 +94,6 @@ export class UserController {
                 message: 'User deleted successfully'
             });
         } catch (error: any) {
-            this.logger.error('Delete user error:', error);
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
@@ -116,7 +112,6 @@ export class UserController {
                 data: user
             });
         } catch (error: any) {
-            this.logger.error('Get profile error:', error);
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'

@@ -59,7 +59,6 @@ export class AuthService {
                 name: user.name
             };
         } catch (error) {
-            this.logger.error('Registration error:', error);
             throw error;
         }
     }
@@ -117,7 +116,6 @@ export class AuthService {
                 }
             };
         } catch (error) {
-            this.logger.error('Login error:', error);
             throw error;
         }
     }
@@ -140,7 +138,6 @@ export class AuthService {
             this.logger.verbose('User logged out');
             return true;
         } catch (error) {
-            this.logger.error('Logout error:', error);
             throw error;
         }
     }
@@ -180,7 +177,6 @@ export class AuthService {
                 accessToken: newAccessToken
             };
         } catch (error) {
-            this.logger.error('Refresh token error:', error);
             throw error;
         }
     }
