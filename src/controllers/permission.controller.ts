@@ -3,6 +3,11 @@ import { Permission, ActionEnum, SubjectEnum } from '../models/permission.model'
 import { Role } from '../models/role.model';
 import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
+import { subjectMapping, actionMapping } from '../constants/role.constant';
+
+interface AuthRequest extends Request {
+    user?: any;
+}
 
 export class PermissionController {
     private logger = new Logger('PermissionController');
@@ -175,6 +180,90 @@ export class PermissionController {
                 data: Object.values(SubjectEnum)
             });
         } catch (error) {
+            res.status(500).json({
+                status: StatusResponse.FAIL,
+                message: 'Internal server error'
+            });
+        }
+    }
+
+    async createPermissionRole(req: AuthRequest, res: Response) {
+        try {
+            const { role, permission } = req.body;
+            const user = req.user;
+            const userIp = req.ip || req.connection.remoteAddress || 'Unknown';
+
+            if (!role) {
+                return res.status(400).json({
+                    status: StatusResponse.FAIL,
+                    message: 'Role Name Is Not Empty',
+                });
+            }
+
+            const checkRole = await Role.findOne({ name: role });
+            if (checkRole) {
+                return res.status(400).json({
+                    status: StatusResponse.FAIL,
+                    message: 'Role Name Already Exist',
+                });
+            }
+
+            const newRole = await Role.create({ name: role });
+            let newData = `Tên role: ${newRole.name}\n`;
+            
+            if (Object.entries(permission).length > 0) {
+                newData += `Với các quyền hạn cụ thể sau:\n`;
+            }
+            
+            const permissions = [];
+            for (const [key, value] of Object.entries(permission)) {
+                const actionArray = value as ActionEnum[];
+                if (actionArray.some((e: ActionEnum) => e === ActionEnum.MANAGE)) {
+                    const _permission = await Permission.create({
+                        role: newRole._id,
+                        action: [ActionEnum.MANAGE],
+                        subject: key,
+                    });
+                    newData += `${subjectMapping[key as SubjectEnum] || key} : ${actionMapping['manage']}\n`;
+                    permissions.push(_permission);
+                } else {
+                    const _permission = await Permission.create({
+                        role: newRole._id,
+                        action: [...actionArray],
+                        subject: key,
+                    });
+                    newData += `${subjectMapping[key as SubjectEnum] || key} : ${actionArray.length > 0 ? actionArray.map((val: ActionEnum) => actionMapping[val] || val).join(', ') : '(Trống)'}\n`;
+                    permissions.push(_permission);
+                }
+            }
+
+            const currentDate = new Date().toLocaleString('vi-VN', {
+                timeZone: 'Asia/Ho_Chi_Minh',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            const stringLog = `${user?.username} vừa tạo mới role và quyền hạn với các thông tin sau:\n${newData}\nVào lúc: <b>${currentDate}</b>\nIP người thực hiện: ${userIp}.`;
+            
+            (req as any)['new-data'] = newData;
+            (req as any)['message-log'] = stringLog;
+
+            this.logger.verbose(`Permission role created: ${newRole.name} by user: ${user?.username}`);
+
+            res.status(201).json({
+                status: StatusResponse.SUCCESS,
+                message: 'Create Permission Success',
+                data: {
+                    role: newRole,
+                    permissions,
+                },
+            });
+        } catch (error) {
+            this.logger.error('Error creating permission role:', error);
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'

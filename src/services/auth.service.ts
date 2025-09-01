@@ -89,13 +89,13 @@ export class AuthService {
             const accessToken = jwt.sign(
                 { userId: user._id, role: user.role.name },
                 process.env['JWT_SECRET'] || 'your-secret-key',
-                { expiresIn: '15m' }
+                { expiresIn: process.env['JWT_EXPIRES_IN'] || '15m' }
             );
 
             const refreshToken = jwt.sign(
                 { userId: user._id },
                 process.env['JWT_REFRESH_SECRET'] || 'your-refresh-secret',
-                { expiresIn: '7d' }
+                { expiresIn: process.env['JWT_REFRESH_EXPIRES_IN'] || '7d' }
             );
 
             // Save refresh token
