@@ -28,7 +28,11 @@ export const roleDefault = [
   export const subjectMapping = {
     all: 'Tất cả',
     user: 'Người dùng',
+    video: 'Video',
     role: 'Quyền hạn',
+    team: 'Team',
+    log: 'Log',
+    token: 'Token',
   };
   export const actionMapping = {
     create: 'Tạo',

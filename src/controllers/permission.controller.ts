@@ -3,7 +3,7 @@ import { Permission, ActionEnum, SubjectEnum } from '../models/permission.model'
 import { Role } from '../models/role.model';
 import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
-import { subjectMapping, actionMapping } from '../constants/role.constant';
+import { subjectMapping, actionMapping, adminRole } from '../constants/role.constant';
 
 interface AuthRequest extends Request {
     user?: any;
@@ -264,6 +264,123 @@ export class PermissionController {
             });
         } catch (error) {
             this.logger.error('Error creating permission role:', error);
+            res.status(500).json({
+                status: StatusResponse.FAIL,
+                message: 'Internal server error'
+            });
+        }
+    }
+
+    async updatePermissionByRoleId(req: AuthRequest, res: Response) {
+        try {
+            const { id } = req.params;
+            const { role: roleName, permission } = req.body;
+            const user = req.user;
+
+            // Check if trying to update admin role
+            if (id === adminRole) {
+                return res.status(403).json({
+                    status: StatusResponse.FAIL,
+                    message: "You Don't Have Permission To Change Admin Role",
+                });
+            }
+
+            // Find role by ID
+            const role = await Role.findById(id);
+            if (!role) {
+                return res.status(400).json({
+                    status: StatusResponse.FAIL,
+                    message: `Not Found Role By Id: ${id}`,
+                });
+            }
+
+            // Check if role name already exists (excluding current role)
+            const checkRoleName = await Role.findOne({
+                _id: { $ne: role._id },
+                name: roleName,
+            });
+
+            if (checkRoleName) {
+                return res.status(400).json({
+                    status: StatusResponse.FAIL,
+                    message: 'Role Name Already Exist',
+                });
+            }
+
+            // Update role name
+            role.name = roleName;
+
+            // Get old permissions for comparison
+            const oldPermissions = await Permission.find({ role: role._id });
+            let oldData = `Tên role: ${role.name}\n`;
+
+            if (oldPermissions.length > 0) {
+                oldData += `Với các quyền hạn cụ thể sau:\n`;
+                for (const pers of oldPermissions) {
+                    oldData += `${subjectMapping[pers.subject as keyof typeof subjectMapping] || pers.subject} : ${pers.action?.length ? pers.action.map((val) => actionMapping[val] || val).join(', ') : '(Trống)'}\n`;
+                }
+            } else {
+                oldData += 'Chưa khởi tạo quyền hạn nào.';
+            }
+
+            // Update permissions
+            const permissions = [];
+            let newData = `Tên role: ${role.name}\n`;
+
+            if (Object.entries(permission).length > 0) {
+                newData += `Với các quyền hạn cụ thể sau:\n`;
+            } else {
+                newData += 'Chưa khởi tạo quyền hạn nào';
+            }
+
+            for (const [key, value] of Object.entries(permission)) {
+                const actionArray = value as ActionEnum[];
+                if (actionArray.some((e: ActionEnum) => e === ActionEnum.MANAGE)) {
+                    const _permission = await Permission.findOneAndUpdate(
+                        {
+                            role: id,
+                            subject: key,
+                        },
+                        {
+                            action: [ActionEnum.MANAGE],
+                            subject: key,
+                        },
+                        { new: true, upsert: true }
+                    );
+                    newData += `${subjectMapping[key as keyof typeof subjectMapping] || key} : ${actionMapping['manage']}\n`;
+                    permissions.push(_permission);
+                } else {
+                    const _permission = await Permission.findOneAndUpdate(
+                        {
+                            role: id,
+                            subject: key,
+                        },
+                        {
+                            action: [...actionArray],
+                            subject: key,
+                        },
+                        { new: true, upsert: true }
+                    );
+                    newData += `${subjectMapping[key as keyof typeof subjectMapping] || key} : ${actionArray?.length ? actionArray.map((val: ActionEnum) => actionMapping[val] || val).join(', ') : '(Trống)'}\n`;
+                    permissions.push(_permission);
+                }
+            }
+
+            // Save role
+            await role.save();
+
+            this.logger.verbose(`Permission role updated: ${role.name} by user: ${user?.username}`);
+
+            res.json({
+                status: StatusResponse.SUCCESS,
+                message: 'Update Permission Success',
+                data: {
+                    role,
+                    permissions,
+                },
+            });
+        } catch (error) {
+            this.logger.error('Error updating permission role:', error);
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'

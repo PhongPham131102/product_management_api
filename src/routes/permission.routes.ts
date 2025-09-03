@@ -4,6 +4,7 @@ import { authenticateToken, authorizeRoles } from '../middleware/auth.middleware
 import { validateDto } from '../middleware/validate-dto.middleware';
 import { CreatePermissionDto, UpdatePermissionDto } from '../dto/permissions/create-permission.dto';
 import { CreatePermissionRoleDto } from '../dto/permissions/create-permission-role.dto';
+import { UpdatePermissionRoleDto } from '../dto/permissions/update-permission-role.dto';
 
 const router = Router();
 const permissionController = new PermissionController();
@@ -13,6 +14,7 @@ router.get('/', authenticateToken, (req, res) => permissionController.getAllPerm
 router.get('/role/:roleId', authenticateToken, (req, res) => permissionController.getPermissionsByRole(req, res));
 router.post('/', authenticateToken, validateDto(CreatePermissionDto), (req, res) => permissionController.createPermission(req, res));
 router.post('/create-permission-role', authenticateToken, validateDto(CreatePermissionRoleDto), (req, res) => permissionController.createPermissionRole(req, res));
+router.put('/update-permission-by-role-id/:id', authenticateToken, validateDto(UpdatePermissionRoleDto), (req, res) => permissionController.updatePermissionByRoleId(req, res));
 router.put('/:id', authenticateToken, validateDto(UpdatePermissionDto), (req, res) => permissionController.updatePermission(req, res));
 router.delete('/:id', authenticateToken, (req, res) => permissionController.deletePermission(req, res));
 

@@ -50,7 +50,7 @@ export function IsEnumValid(validationOptions?: ValidationOptions) {
   };
 }
 
-export class CreatePermissionRoleDto {
+export class UpdatePermissionRoleDto {
   @IsString({ message: 'Role name must be a string' })
   @IsNotEmpty({ message: 'Role name is required' })
   role!: string;
