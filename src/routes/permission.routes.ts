@@ -14,7 +14,7 @@ router.get('/', authenticateToken, (req, res) => permissionController.getAllPerm
 router.get('/role/:roleId', authenticateToken, (req, res) => permissionController.getPermissionsByRole(req, res));
 router.post('/', authenticateToken, validateDto(CreatePermissionDto), (req, res) => permissionController.createPermission(req, res));
 router.post('/create-permission-role', authenticateToken, validateDto(CreatePermissionRoleDto), (req, res) => permissionController.createPermissionRole(req, res));
-router.put('/update-permission-by-role-id/:id', authenticateToken, validateDto(UpdatePermissionRoleDto), (req, res) => permissionController.updatePermissionByRoleId(req, res));
+router.put('/update-permission-by-role/:id', authenticateToken, validateDto(UpdatePermissionRoleDto), (req, res) => permissionController.updatePermissionByRoleId(req, res));
 router.put('/:id', authenticateToken, validateDto(UpdatePermissionDto), (req, res) => permissionController.updatePermission(req, res));
 router.delete('/:id', authenticateToken, (req, res) => permissionController.deletePermission(req, res));
 

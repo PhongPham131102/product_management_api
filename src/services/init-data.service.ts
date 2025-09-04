@@ -5,6 +5,7 @@ import { Permission } from '../models/permission.model';
 import { usersDefault, permisstionDefault } from '../constants/role.constant';
 import { Logger } from '../utils/logger.util';
 import bcrypt from 'bcryptjs';
+import { Types } from 'mongoose';
 
 export class InitDataService {
     private logger = new Logger('InitDataService');
@@ -81,7 +82,7 @@ export class InitDataService {
 
     private async createDefaultUserRole(): Promise<void> {
         try {
-            const userRole = await Role.findOne({ name: 'user' });
+            const userRole = await Role.findOne({ _id: new Types.ObjectId('65a0a995aa7ea10ac4d16962') });
             if (!userRole) {
                 await Role.create({
                     name: 'user',

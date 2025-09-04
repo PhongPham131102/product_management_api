@@ -9,43 +9,52 @@ import {
 } from 'class-validator';
 import { ActionEnum, SubjectEnum } from '../../models/permission.model';
 
-@ValidatorConstraint({ name: 'isValidEnumValue', async: false })
-export class IsValidEnumValue implements ValidatorConstraintInterface {
+@ValidatorConstraint({ name: 'isValidPermissionObject', async: false })
+export class IsValidPermissionObject implements ValidatorConstraintInterface {
   validate(value: any) {
+    if (!value || typeof value !== 'object') {
+      return false;
+    }
+
     try {
-      const allKeysInEnum = Object.keys(value).every((key) =>
-        Object.values(SubjectEnum).includes(key as any),
-      );
-      const allValuesInEnum = Object.values(value).every((iterator) =>
-        (iterator as any).every((action: any) =>
-          Object.values(ActionEnum).includes(action),
-        ),
-      );
-      return allKeysInEnum && allValuesInEnum;
+      // Kiểm tra từng key (subject) và value (actions array)
+      for (const [subject, actions] of Object.entries(value)) {
+        // Kiểm tra subject có hợp lệ không
+        if (!Object.values(SubjectEnum).includes(subject as SubjectEnum)) {
+          return false;
+        }
+
+        // Kiểm tra actions có phải array không
+        if (!Array.isArray(actions)) {
+          return false;
+        }
+
+        // Kiểm tra từng action có hợp lệ không
+        for (const action of actions) {
+          if (!Object.values(ActionEnum).includes(action as ActionEnum)) {
+            return false;
+          }
+        }
+      }
+      return true;
     } catch (error) {
       return false;
     }
   }
 
   defaultMessage(args: ValidationArguments) {
-    return `${args.property} key must be a valid value from ${Object.values(
-      SubjectEnum,
-    ).join(', ')}. and ${
-      args.property
-    } value must be a valid value from ${Object.values(ActionEnum).join(
-      ', ',
-    )}.`;
+    return `${args.property} must be a valid permission object. Keys must be from: ${Object.values(SubjectEnum).join(', ')}. Values must be arrays of: ${Object.values(ActionEnum).join(', ')}.`;
   }
 }
 
-export function IsEnumValid(validationOptions?: ValidationOptions) {
+export function IsValidPermission(validationOptions?: ValidationOptions) {
   return function (object: Record<string, any>, propertyName: string) {
     registerDecorator({
-      name: 'isEnumValid',
+      name: 'isValidPermission',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions || {},
-      validator: IsValidEnumValue,
+      validator: IsValidPermissionObject,
     });
   };
 }
@@ -55,6 +64,6 @@ export class CreatePermissionRoleDto {
   @IsNotEmpty({ message: 'Role name is required' })
   role!: string;
 
-  @IsEnumValid()
+  @IsValidPermission()
   permission!: Record<SubjectEnum, ActionEnum[]>;
 }

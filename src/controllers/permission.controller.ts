@@ -4,6 +4,7 @@ import { Role } from '../models/role.model';
 import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
 import { subjectMapping, actionMapping, adminRole } from '../constants/role.constant';
+import { Types } from 'mongoose';
 
 interface AuthRequest extends Request {
     user?: any;
@@ -23,7 +24,7 @@ export class PermissionController {
                 data: permissions
             });
         } catch (error) {
-            
+
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -210,11 +211,11 @@ export class PermissionController {
 
             const newRole = await Role.create({ name: role });
             let newData = `Tên role: ${newRole.name}\n`;
-            
+
             if (Object.entries(permission).length > 0) {
                 newData += `Với các quyền hạn cụ thể sau:\n`;
             }
-            
+
             const permissions = [];
             for (const [key, value] of Object.entries(permission)) {
                 const actionArray = value as ActionEnum[];
@@ -248,7 +249,7 @@ export class PermissionController {
             });
 
             const stringLog = `${user?.username} vừa tạo mới role và quyền hạn với các thông tin sau:\n${newData}\nVào lúc: <b>${currentDate}</b>\nIP người thực hiện: ${userIp}.`;
-            
+
             (req as any)['new-data'] = newData;
             (req as any)['message-log'] = stringLog;
 
@@ -284,7 +285,12 @@ export class PermissionController {
                     message: "You Don't Have Permission To Change Admin Role",
                 });
             }
-
+            if (!id || !Types.ObjectId.isValid(id)) {
+                return res.status(400).json({
+                    status: StatusResponse.FAIL,
+                    message: `Invalid Role Id: ${id}`,
+                });
+            }
             // Find role by ID
             const role = await Role.findById(id);
             if (!role) {
