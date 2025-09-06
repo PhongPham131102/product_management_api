@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { PermissionController } from '../controllers/permission.controller';
-import { authenticateToken, authorizeRoles } from '../middleware/auth.middleware';
+import { authenticateToken, } from '../middleware/auth.middleware';
 import { validateDto } from '../middleware/validate-dto.middleware';
 import { CreatePermissionDto, UpdatePermissionDto } from '../dto/permissions/create-permission.dto';
 import { CreatePermissionRoleDto } from '../dto/permissions/create-permission-role.dto';

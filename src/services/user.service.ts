@@ -1,6 +1,8 @@
-import { User } from '../models/user.model';
+import { Types } from 'mongoose';
+import { User, UserDocument } from '../models/user.model';
 import { Logger } from '../utils/logger.util';
-
+import { PermissionService } from './permission.service';
+const permissionService = new PermissionService()
 export class UserService {
     private logger = new Logger('UserService');
 
@@ -115,5 +117,24 @@ export class UserService {
         } catch (error) {
             throw error;
         }
+    }
+    async getUserByIdAuthGuard(id: string) {
+        if (!id) {
+            return null;
+        }
+        const user: UserDocument | null = await User
+            .findOne({ _id: new Types.ObjectId(id), isDelete: false })
+            .populate('role');
+        if (!user) {
+            return null;
+        }
+        const findPermission = await permissionService.getPermissionByRole(
+            user.role._id as Types.ObjectId,
+        );
+
+        return {
+            ...user.toObject(),
+            permission: findPermission,
+        };
     }
 }

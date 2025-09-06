@@ -54,26 +54,4 @@ export const authenticateToken = async (
     }
 };
 
-export const authorizeRoles = (...roles: string[]) => {
-    return (req: AuthRequest, res: Response, next: NextFunction): void => {
-        if (!req.user) {
-            res.status(401).json({
-                status: 'FAIL',
-                error_code: StatusResponse.INVALID_TOKEN,
-                message: 'Authentication required'
-            });
-            return;
-        }
 
-        if (!roles.includes(req.user.role.name)) {
-            res.status(403).json({
-                status: 'FAIL',
-                error_code: StatusResponse.INVALID_TOKEN,
-                message: 'Insufficient permissions'
-            });
-            return;
-        }
-
-        next();
-    };
-};

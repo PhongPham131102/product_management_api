@@ -10,6 +10,7 @@ function toEnum<T extends string>(...values: T[]) {
 
 export const StatusResponse = toEnum(
   'SUCCESS',
+  "EXPIRED_ACCESS_TOKEN",
   'FAIL',
   'FORBIDDEN',
   'NOTFOUND',
