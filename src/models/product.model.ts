@@ -2,6 +2,12 @@ import mongoose, { Document, Schema, Types } from "mongoose";
 import { CategoryDocument } from "./category.model";
 import { StockDocument } from "./stock.model";
 
+export enum ProductStatusEnum {
+    IN_STOCK = 0,      // Còn hàng
+    LOW_STOCK = 1,     // Sắp hết hàng
+    OUT_OF_STOCK = 2   // Hết hàng
+}
+
 export interface IProduct extends Document {
     _id: mongoose.Types.ObjectId;
     name: string;
@@ -10,6 +16,9 @@ export interface IProduct extends Document {
     description: string;
     price: number;
     originalPrice: number;
+    quantity: number;
+    reorderLevel: number;
+    status: ProductStatusEnum;
     categories: CategoryDocument[] | Types.ObjectId[];
     stock: StockDocument | Types.ObjectId;
     imageUrl: string;
@@ -59,6 +68,23 @@ const productSchema = new Schema<IProduct>(
             required: [true, "Product original price is required"],
             min: [0, "Product original price cannot be negative"],
         },
+        quantity: {
+            type: Number,
+            required: [true, "Product quantity is required"],
+            min: [0, "Product quantity cannot be negative"],
+            default: 0,
+        },
+        reorderLevel: {
+            type: Number,
+            required: [true, "Product reorder level is required"],
+            min: [0, "Product reorder level cannot be negative"],
+            default: 0,
+        },
+        status: {
+            type: Number,
+            enum: [0, 1, 2],
+            default: 0,
+        },
         categories: [{
             type: Types.ObjectId,
             ref: 'Category',
@@ -89,6 +115,8 @@ productSchema.index({ name: 1 });
 productSchema.index({ sku: 1 });
 productSchema.index({ isDelete: 1 });
 productSchema.index({ price: 1 });
+productSchema.index({ quantity: 1 });
+productSchema.index({ status: 1 });
 productSchema.index({ categories: 1 });
 productSchema.index({ stock: 1 });
 

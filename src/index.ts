@@ -15,6 +15,7 @@ import roleRoutes from './routes/role.routes';
 import permissionRoutes from './routes/permission.routes';
 import stockRoutes from './routes/stock.routes';
 import categoryRoutes from './routes/category.routes';
+import productRoutes from './routes/product.routes';
 
 const logger = new Logger("Application");
 dotenv.config();
@@ -28,6 +29,9 @@ app.use(morgan('combined', { stream: loggerStream }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files (uploaded images)
+app.use('/uploads', express.static('uploads'));
+
 // Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
@@ -35,6 +39,7 @@ app.use('/api/v1/roles', roleRoutes);
 app.use('/api/v1/permissions', permissionRoutes);
 app.use('/api/v1/stocks', stockRoutes);
 app.use('/api/v1/categories', categoryRoutes);
+app.use('/api/v1/products', productRoutes);
 
 app.use(errorMiddleware);
 
