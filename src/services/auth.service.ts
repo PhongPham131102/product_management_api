@@ -84,17 +84,25 @@ export class AuthService {
                     message: 'Invalid credentials'
                 };
             }
+
+            // Disallow customer role to login
+            if (user.role && (user.role as any).name && String((user.role as any).name).toLowerCase() === 'customer') {
+                throw {
+                    status: 403,
+                    message: 'Customer role is not allowed to login'
+                };
+            }
             // Generate tokens
             const accessToken = jwt.sign(
-                { userId: user._id, role: user.role.name },
-                process.env['JWT_SECRET'] || 'your-secret-key',
-                { expiresIn: process.env['JWT_EXPIRES_IN'] || '15m' }
+                { userId: user._id, role: (user.role as any).name },
+                (process.env['JWT_SECRET'] || 'your-secret-key') as jwt.Secret,
+                { expiresIn: (process.env['JWT_EXPIRES_IN'] || '15m') as any }
             );
 
             const refreshToken = jwt.sign(
                 { userId: user._id },
-                process.env['JWT_REFRESH_SECRET'] || 'your-refresh-secret',
-                { expiresIn: process.env['JWT_REFRESH_EXPIRES_IN'] || '7d' }
+                (process.env['JWT_REFRESH_SECRET'] || 'your-refresh-secret') as jwt.Secret,
+                { expiresIn: (process.env['JWT_REFRESH_EXPIRES_IN'] || '7d') as any }
             );
 
             // Save refresh token
@@ -167,9 +175,9 @@ export class AuthService {
 
             // Generate new access token
             const newAccessToken = jwt.sign(
-                { userId: user._id, role: user.role.name },
-                process.env['JWT_SECRET'] || 'your-secret-key',
-                { expiresIn: '15m' }
+                { userId: user._id, role: (user.role as any).name },
+                (process.env['JWT_SECRET'] || 'your-secret-key') as jwt.Secret,
+                { expiresIn: '15m' as any }
             );
 
             return {

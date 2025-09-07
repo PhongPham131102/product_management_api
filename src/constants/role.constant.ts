@@ -3,6 +3,14 @@ export const roleDefault = [
     _id: '659ba7c62b611171a5347a97',
     name: 'Supper Admin',
   },
+  {
+    _id: '65a0a995aa7ea10ac4d16963',
+    name: 'employee',
+  },
+  {
+    _id: '65a0a995aa7ea10ac4d16964',
+    name: 'customer',
+  },
 ];
 export const permisstionDefault = [
   {
@@ -21,6 +29,15 @@ export const usersDefault = [
     name: 'Admin',
     email: 'admin@gmail.com',
     role: '659ba7c62b611171a5347a97',
+    isDelete: false,
+  },
+  {
+    _id: '6604de8ae5068069a1bbb593',
+    username: 'employee',
+    password: '$2a$12$1Pd71qAAxmMafUbTJxFZduVlGQDNOFXIFEF8/VYTmROrZJDritdmu',
+    name: 'Employee',
+    email: 'employee@gmail.com',
+    role: '65a0a995aa7ea10ac4d16963',
     isDelete: false,
   },
 ];

@@ -16,6 +16,7 @@ import permissionRoutes from './routes/permission.routes';
 import stockRoutes from './routes/stock.routes';
 import categoryRoutes from './routes/category.routes';
 import productRoutes from './routes/product.routes';
+import invoiceRoutes from './routes/invoice.routes';
 
 const logger = new Logger("Application");
 dotenv.config();
@@ -55,6 +56,7 @@ app.use('/api/v1/permissions', permissionRoutes);
 app.use('/api/v1/stocks', stockRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/invoices', invoiceRoutes);
 
 app.use(errorMiddleware);
 

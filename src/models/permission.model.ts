@@ -18,6 +18,7 @@ export enum SubjectEnum {
   STOCK = "stock",
   PRODUCT = "product",
   CATEGORY = "category",
+  INVOICE = "invoice",
 }
 
 export interface IPermission extends Document {
