@@ -1,4 +1,4 @@
-import { Stock, StockStatusEnum } from '../models/stock.model';
+import { Stock } from '../models/stock.model';
 import { Logger } from '../utils/logger.util';
 import { CreateStockDto } from '../dto/stocks/create-stock.dto';
 import { UpdateStockDto } from '../dto/stocks/update-stock.dto';
@@ -15,7 +15,6 @@ export class StockService {
             page = 1,
             limit = 10,
             search,
-            status,
             sortBy = 'createdAt',
             sortOrder = 'desc'
         } = queryDto;
@@ -26,11 +25,6 @@ export class StockService {
         // Add search filter
         if (search) {
             filter.name = { $regex: search, $options: 'i' };
-        }
-
-        // Add status filter
-        if (status !== undefined) {
-            filter.status = status;
         }
 
         // Build sort object
@@ -86,7 +80,7 @@ export class StockService {
 
     async createStock(createStockDto: CreateStockDto) {
 
-        const { name, stock, reorderLevel, status } = createStockDto;
+        const { name } = createStockDto;
 
         // Check if stock name already exists
         const existingStock = await Stock.findOne({
@@ -103,27 +97,12 @@ export class StockService {
             });
         }
 
-        // Auto-calculate status based on stock level
-        let calculatedStatus = status;
-        if (calculatedStatus === undefined) {
-            if (stock === 0) {
-                calculatedStatus = StockStatusEnum.OUT_OF_STOCK;
-            } else if (stock <= reorderLevel) {
-                calculatedStatus = StockStatusEnum.LOW_STOCK;
-            } else {
-                calculatedStatus = StockStatusEnum.NORMAL;
-            }
-        }
+
         const newStock = new Stock({
             name: name.trim(),
-            stock,
-            reorderLevel,
-            status: calculatedStatus,
         });
 
         await newStock.save();
-
-        this.logger.verbose(`Stock created: ${newStock.name}`);
 
         return newStock;
 
@@ -131,7 +110,7 @@ export class StockService {
 
     async updateStock(id: string, updateStockDto: UpdateStockDto) {
 
-        const { name, stock, reorderLevel, status } = updateStockDto;
+        const { name } = updateStockDto;
 
         const stockDoc = await Stock.findOne({ _id: id, isDelete: false });
 
@@ -160,27 +139,7 @@ export class StockService {
             }
         }
 
-        // Update fields
         if (name !== undefined) stockDoc.name = name.trim();
-        if (stock !== undefined) stockDoc.stock = stock;
-        if (reorderLevel !== undefined) stockDoc.reorderLevel = reorderLevel;
-
-        // Auto-calculate status if not explicitly provided
-        if (status !== undefined) {
-            stockDoc.status = status;
-        } else if (stock !== undefined || reorderLevel !== undefined) {
-            // Recalculate status based on new stock level
-            const currentStock = stock !== undefined ? stock : stockDoc.stock;
-            const currentReorderLevel = reorderLevel !== undefined ? reorderLevel : stockDoc.reorderLevel;
-
-            if (currentStock === 0) {
-                stockDoc.status = StockStatusEnum.OUT_OF_STOCK;
-            } else if (currentStock <= currentReorderLevel) {
-                stockDoc.status = StockStatusEnum.LOW_STOCK;
-            } else {
-                stockDoc.status = StockStatusEnum.NORMAL;
-            }
-        }
 
         await stockDoc.save();
 
@@ -209,28 +168,6 @@ export class StockService {
         this.logger.verbose(`Stock deleted: ${stock.name}`);
 
         return true;
-
-    }
-
-    async getStocksByStatus(status: StockStatusEnum) {
-
-        const stocks = await Stock.find({
-            status,
-            isDelete: false
-        }).sort({ createdAt: -1 });
-
-        return stocks;
-
-    }
-
-    async getLowStockItems() {
-
-        const stocks = await Stock.find({
-            isDelete: false,
-            $expr: { $lte: ['$stock', '$reorderLevel'] }
-        }).sort({ stock: 1 });
-
-        return stocks;
 
     }
 

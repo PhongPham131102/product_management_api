@@ -3,7 +3,6 @@ import { StockService } from '../services/stock.service';
 import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
 import { CreateStockDto } from '../dto/stocks/create-stock.dto';
-import { StockStatusEnum } from '../models/stock.model';
 import { UpdateStockDto } from '../dto/stocks/update-stock.dto';
 import { StockQueryDto } from '../dto/stocks/stock-query.dto';
 import { HttpException } from '../exceptions/http-exception.exception';
@@ -132,59 +131,4 @@ export class StockController {
             });
         }
     }
-
-    async getStocksByStatus(req: Request, res: Response) {
-        try {
-            const { status } = req.params;
-
-            if (!status || isNaN(Number(status))) {
-                return res.status(400).json({
-                    status: StatusResponse.FAIL,
-                    message: 'Valid status is required'
-                });
-            }
-
-            const statusEnum = Number(status) as StockStatusEnum;
-
-            if (!Object.values(StockStatusEnum).includes(statusEnum)) {
-                return res.status(400).json({
-                    status: StatusResponse.FAIL,
-                    message: 'Invalid status value'
-                });
-            }
-
-            const stocks = await this.stockService.getStocksByStatus(statusEnum);
-
-            return res.json({
-                status: StatusResponse.SUCCESS,
-                message: 'Stocks retrieved successfully',
-                data: stocks
-            });
-        } catch (error: any) {
-            if (error instanceof HttpException) throw error
-            return res.status(error.status || 500).json({
-                status: StatusResponse.FAIL,
-                message: error.message || 'Internal server error'
-            });
-        }
-    }
-
-    async getLowStockItems(_req: Request, res: Response) {
-        try {
-            const stocks = await this.stockService.getLowStockItems();
-
-            return res.json({
-                status: StatusResponse.SUCCESS,
-                message: 'Low stock items retrieved successfully',
-                data: stocks
-            });
-        } catch (error: any) {
-            if (error instanceof HttpException) throw error
-            return res.status(error.status || 500).json({
-                status: StatusResponse.FAIL,
-                message: error.message || 'Internal server error'
-            });
-        }
-    }
-
 }

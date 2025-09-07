@@ -24,25 +24,11 @@ router.get('/:id',
     (req, res) => stockController.getStockById(req, res)
 );
 
-
-router.get('/status/:status',
-    authorization(SubjectEnum.STOCK, ActionEnum.READ),
-    (req, res) => stockController.getStocksByStatus(req, res)
-);
-
-
-router.get('/low-stock/items',
-    authorization(SubjectEnum.STOCK, ActionEnum.READ),
-    (req, res) => stockController.getLowStockItems(req, res)
-);
-
-
 router.post('/',
     authorization(SubjectEnum.STOCK, ActionEnum.CREATE),
     validateDto(CreateStockDto),
     (req, res) => stockController.createStock(req, res)
 );
-
 
 router.put('/:id',
     authorization(SubjectEnum.STOCK, ActionEnum.UPDATE),

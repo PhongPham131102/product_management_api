@@ -1,17 +1,9 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export enum StockStatusEnum {
-    NORMAL = 0,
-    LOW_STOCK = 1,
-    OUT_OF_STOCK = 2,
-}
-
 export interface IStock extends Document {
     _id: mongoose.Types.ObjectId;
     name: string;
     stock: number;
-    reorderLevel: number;
-    status: StockStatusEnum;
     isDelete: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -30,16 +22,7 @@ const stockSchema = new Schema<IStock>(
             type: Number,
             required: [true, "Stock quantity is required"],
             min: [0, "Stock quantity cannot be negative"],
-        },
-        reorderLevel: {
-            type: Number,
-            required: [true, "Reorder level is required"],
-            min: [0, "Reorder level cannot be negative"],
-        },
-        status: {
-            type: Number,
-            enum: StockStatusEnum,
-            default: StockStatusEnum.NORMAL,
+            default: 0,
         },
         isDelete: {
             type: Boolean,
@@ -53,7 +36,6 @@ const stockSchema = new Schema<IStock>(
 
 // Index for better performance
 stockSchema.index({ name: 1 });
-stockSchema.index({ status: 1 });
 stockSchema.index({ isDelete: 1 });
 
 export const Stock = mongoose.model<IStock>("Stock", stockSchema);

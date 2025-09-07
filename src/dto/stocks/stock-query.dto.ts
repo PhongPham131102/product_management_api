@@ -1,6 +1,5 @@
-import { IsOptional, IsString, IsNumber, IsEnum, Min, Max } from "class-validator";
+import { IsOptional, IsString, IsNumber, Min, Max } from "class-validator";
 import { Type } from "class-transformer";
-import { StockStatusEnum } from "../../models/stock.model";
 
 export class StockQueryDto {
     @IsOptional()
@@ -19,11 +18,6 @@ export class StockQueryDto {
     @IsOptional()
     @IsString({ message: 'Search must be a string' })
     search?: string;
-
-    @IsOptional()
-    @Type(() => Number)
-    @IsEnum(StockStatusEnum, { message: 'Status must be a valid stock status' })
-    status?: StockStatusEnum;
 
     @IsOptional()
     @IsString({ message: 'Sort field must be a string' })
