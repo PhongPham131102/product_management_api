@@ -1,25 +1,25 @@
 import { Request, Response } from 'express';
 import { UserService } from '../services/user.service';
-import { Logger } from '../utils/logger.util';
+// import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
 import { HttpException } from '../exceptions/http-exception.exception';
 
 export class UserController {
-    private logger = new Logger('UserController');
     private userService = new UserService();
 
     async getAllUsers(req: Request, res: Response) {
         try {
-            const users = await this.userService.getAllUsers();
-
+            const result = await this.userService.getAllUsers(req.query as any);
             res.json({
                 status: StatusResponse.SUCCESS,
                 message: 'Users retrieved successfully',
-                data: users
+                data: result.data,
+                pagination: result.pagination
             });
+            return;
         } catch (error: any) {
             if (error instanceof HttpException) throw error
-            res.status(error.status || 500).json({
+            return res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
             });
@@ -30,10 +30,11 @@ export class UserController {
         try {
             const { id } = req.params;
             if (!id) {
-                return res.status(400).json({
+                res.status(400).json({
                     status: StatusResponse.FAIL,
                     message: 'User ID is required'
                 });
+                return;
             }
 
             const user = await this.userService.getUserById(id);
@@ -43,9 +44,10 @@ export class UserController {
                 message: 'User retrieved successfully',
                 data: user
             });
+            return;
         } catch (error: any) {
             if (error instanceof HttpException) throw error
-            res.status(error.status || 500).json({
+            return res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
             });
@@ -58,10 +60,11 @@ export class UserController {
             const { name, email } = req.body;
 
             if (!id) {
-                return res.status(400).json({
+                res.status(400).json({
                     status: StatusResponse.FAIL,
                     message: 'User ID is required'
                 });
+                return;
             }
 
             const userData = await this.userService.updateUser(id, { name, email });
@@ -71,9 +74,10 @@ export class UserController {
                 message: 'User updated successfully',
                 data: userData
             });
+            return;
         } catch (error: any) {
             if (error instanceof HttpException) throw error
-            res.status(error.status || 500).json({
+            return res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
             });
@@ -85,10 +89,11 @@ export class UserController {
             const { id } = req.params;
 
             if (!id) {
-                return res.status(400).json({
+                res.status(400).json({
                     status: StatusResponse.FAIL,
                     message: 'User ID is required'
                 });
+                return;
             }
 
             await this.userService.deleteUser(id);
@@ -97,9 +102,10 @@ export class UserController {
                 status: StatusResponse.SUCCESS,
                 message: 'User deleted successfully'
             });
+            return;
         } catch (error: any) {
             if (error instanceof HttpException) throw error
-            res.status(error.status || 500).json({
+            return res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
             });
@@ -116,9 +122,10 @@ export class UserController {
                 message: 'Profile retrieved successfully',
                 data: user
             });
+            return;
         } catch (error: any) {
             if (error instanceof HttpException) throw error
-            res.status(error.status || 500).json({
+            return res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
             });

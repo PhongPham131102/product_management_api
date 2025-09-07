@@ -6,13 +6,59 @@ const permissionService = new PermissionService()
 export class UserService {
     private logger = new Logger('UserService');
 
-    async getAllUsers() {
+    async getAllUsers(query: any = {}) {
         try {
-            const users = await User.find({ isDelete: false })
-                .populate('role')
-                .select('-password -refresh_token');
+            const {
+                page = 1,
+                limit = 10,
+                search,
+                role,
+                sortBy = 'createdAt',
+                sortOrder = 'desc'
+            } = query;
 
-            return users;
+            const filter: any = { isDelete: false };
+            if (search) {
+                filter.$or = [
+                    { username: { $regex: search, $options: 'i' } },
+                    { name: { $regex: search, $options: 'i' } },
+                    { email: { $regex: search, $options: 'i' } },
+                ];
+            }
+            if (role) {
+                filter.role = new Types.ObjectId(role);
+            }
+
+            const sort: any = {};
+            sort[sortBy] = sortOrder === 'asc' ? 1 : -1;
+
+            const skip = (page - 1) * limit;
+
+            const [users, total] = await Promise.all([
+                User.find(filter)
+                    .populate('role')
+                    .select('-password -refresh_token')
+                    .sort(sort)
+                    .skip(skip)
+                    .limit(limit),
+                User.countDocuments(filter)
+            ]);
+
+            const totalPages = Math.ceil(total / limit);
+            const hasNextPage = page < totalPages;
+            const hasPrevPage = page > 1;
+
+            return {
+                data: users,
+                pagination: {
+                    currentPage: page,
+                    totalPages,
+                    totalItems: total,
+                    itemsPerPage: limit,
+                    hasNextPage,
+                    hasPrevPage
+                }
+            };
         } catch (error) {
             throw error;
         }
@@ -37,9 +83,9 @@ export class UserService {
         }
     }
 
-    async updateUser(id: string, updateData: { name?: string; email?: string }) {
+    async updateUser(id: string, updateData: { name?: string; email?: string; username?: string; password?: string; role?: string }) {
         try {
-            const { name, email } = updateData;
+            const { name, email, username, password, role } = updateData;
 
             const user = await User.findById(id);
             if (!user || user.isDelete) {
@@ -60,8 +106,27 @@ export class UserService {
                 }
             }
 
-            user.name = name || user.name;
-            user.email = email || user.email || '';
+            // Check if username is already taken by another user
+            if (username && username !== user.username) {
+                const existingUsername = await User.findOne({ username, _id: { $ne: id } });
+                if (existingUsername) {
+                    throw {
+                        status: 400,
+                        message: 'Username already exists'
+                    };
+                }
+            }
+
+            user.name = name ?? user.name;
+            user.email = email ?? user.email ?? '';
+            if (username !== undefined) user.username = username;
+            if (password) {
+                const bcrypt = await import('bcryptjs');
+                user.password = await bcrypt.hash(password, 12);
+            }
+            if (role) {
+                user.role = new Types.ObjectId(role) as any;
+            }
             await user.save();
 
             this.logger.verbose(`User updated: ${user.username}`);
