@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { StatusResponse } from "../common/status-response.common";
 import RoleService from "../services/role.service";
+import { HttpException } from "../exceptions/http-exception.exception";
 
 export class RoleController {
   private service = new RoleService();
@@ -23,6 +24,7 @@ export class RoleController {
         data: role,
       });
     } catch (error) {
+      if (error instanceof HttpException) throw error
       const status = (error as any).status || 500;
       return res.status(status).json({
         status: StatusResponse.FAIL,
@@ -43,6 +45,7 @@ export class RoleController {
         data: role,
       });
     } catch (error) {
+      if (error instanceof HttpException) throw error
       const status = (error as any).status || 500;
       return res.status(status).json({
         status: StatusResponse.FAIL,
@@ -61,6 +64,7 @@ export class RoleController {
         message: "Role Deleted Successfully!",
       });
     } catch (error) {
+      if (error instanceof HttpException) throw error
       const status = (error as any).status || 500;
       return res.status(status).json({
         status: StatusResponse.FAIL,
@@ -79,8 +83,7 @@ export class RoleController {
         data: role,
       });
     } catch (error) {
-      if (error instanceof Error)
-        throw error
+      if (error instanceof HttpException) throw error
       const status = (error as any).status || 500;
       return res.status(status).json({
         status: StatusResponse.FAIL,
@@ -98,6 +101,7 @@ export class RoleController {
         data: roles,
       });
     } catch (error) {
+      if (error instanceof HttpException) throw error
       const status = (error as any).status || 500;
       return res.status(status).json({
         status: StatusResponse.FAIL,

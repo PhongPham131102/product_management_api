@@ -5,6 +5,7 @@ import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
 import { subjectMapping, actionMapping, adminRole } from '../constants/role.constant';
 import { Types } from 'mongoose';
+import { HttpException } from '../exceptions/http-exception.exception';
 
 interface AuthRequest extends Request {
     user?: any;
@@ -24,7 +25,7 @@ export class PermissionController {
                 data: permissions
             });
         } catch (error) {
-
+            if (error instanceof HttpException) throw error
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -44,6 +45,7 @@ export class PermissionController {
                 data: permissions
             });
         } catch (error) {
+            if (error instanceof HttpException) throw error
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -93,6 +95,7 @@ export class PermissionController {
                 data: permission
             });
         } catch (error) {
+            if (error instanceof HttpException) throw error
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -125,6 +128,7 @@ export class PermissionController {
                 data: permission
             });
         } catch (error) {
+            if (error instanceof HttpException) throw error
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -151,6 +155,7 @@ export class PermissionController {
                 message: 'Permission deleted successfully'
             });
         } catch (error) {
+            if (error instanceof HttpException) throw error
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -166,6 +171,7 @@ export class PermissionController {
                 data: Object.values(ActionEnum)
             });
         } catch (error) {
+            if (error instanceof HttpException) throw error
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -181,6 +187,7 @@ export class PermissionController {
                 data: Object.values(SubjectEnum)
             });
         } catch (error) {
+            if (error instanceof HttpException) throw error
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -264,7 +271,7 @@ export class PermissionController {
                 },
             });
         } catch (error) {
-            this.logger.error('Error creating permission role:', error);
+            if (error instanceof HttpException) throw error
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
@@ -386,7 +393,7 @@ export class PermissionController {
                 },
             });
         } catch (error) {
-            this.logger.error('Error updating permission role:', error);
+            if (error instanceof HttpException) throw error
             res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'

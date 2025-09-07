@@ -84,7 +84,6 @@ export class AuthService {
                     message: 'Invalid credentials'
                 };
             }
-            console.log("process.env['JWT_SECRET']: ", process.env['JWT_SECRET'])
             // Generate tokens
             const accessToken = jwt.sign(
                 { userId: user._id, role: user.role.name },

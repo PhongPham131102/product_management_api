@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { UserService } from '../services/user.service';
 import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
+import { HttpException } from '../exceptions/http-exception.exception';
 
 export class UserController {
     private logger = new Logger('UserController');
@@ -17,6 +18,7 @@ export class UserController {
                 data: users
             });
         } catch (error: any) {
+            if (error instanceof HttpException) throw error
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
@@ -42,6 +44,7 @@ export class UserController {
                 data: user
             });
         } catch (error: any) {
+            if (error instanceof HttpException) throw error
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
@@ -69,6 +72,7 @@ export class UserController {
                 data: userData
             });
         } catch (error: any) {
+            if (error instanceof HttpException) throw error
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
@@ -94,6 +98,7 @@ export class UserController {
                 message: 'User deleted successfully'
             });
         } catch (error: any) {
+            if (error instanceof HttpException) throw error
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'
@@ -112,6 +117,7 @@ export class UserController {
                 data: user
             });
         } catch (error: any) {
+            if (error instanceof HttpException) throw error
             res.status(error.status || 500).json({
                 status: StatusResponse.FAIL,
                 message: error.message || 'Internal server error'

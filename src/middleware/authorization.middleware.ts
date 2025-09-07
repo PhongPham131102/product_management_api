@@ -18,7 +18,7 @@ export const authorization = (subject?: SubjectEnum, action?: ActionEnum) => {
         try {
             // --- Auth ---
             const authHeader = req.headers['authorization'];
-            console.log("authHeader: ", authHeader)
+
             if (!authHeader) return res.status(401).json({
                 status: 'FAIL',
                 error_code: StatusResponse.INVALID_TOKEN,
@@ -27,7 +27,6 @@ export const authorization = (subject?: SubjectEnum, action?: ActionEnum) => {
 
             const [type, token] = authHeader.split(' ');
             if (type !== 'Bearer' || !token) {
-                console.log("sdfd")
                 return res.status(401).json({
                     status: 'FAIL',
                     error_code: StatusResponse.INVALID_TOKEN,

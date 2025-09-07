@@ -14,9 +14,8 @@ export enum SubjectEnum {
   USER = "user",
   VIDEO = "video",
   ROLE = "role",
-  TEAM = "team",
   LOG = "log",
-  TOKEN = "token",
+  STOCK = "stock",
 }
 
 export interface IPermission extends Document {
@@ -48,7 +47,7 @@ const permissionSchema = new Schema<IPermission>(
     },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
 
