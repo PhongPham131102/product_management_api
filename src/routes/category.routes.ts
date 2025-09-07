@@ -23,13 +23,6 @@ router.get('/:id',
     authorization(SubjectEnum.CATEGORY, ActionEnum.READ),
     (req, res) => categoryController.getCategoryById(req, res)
 );
-
-// Get categories by name
-router.get('/search/name',
-    authorization(SubjectEnum.CATEGORY, ActionEnum.READ),
-    (req, res) => categoryController.getCategoriesByName(req, res)
-);
-
 // Create new category
 router.post('/',
     authorization(SubjectEnum.CATEGORY, ActionEnum.CREATE),

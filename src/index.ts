@@ -23,8 +23,23 @@ dotenv.config();
 const app = express();
 const PORT = process.env['PORT'] || 3000;
 
-app.use(helmet());
-app.use(cors());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
+
+const corsOrigin = (process.env['CORS_ORIGIN'] || '*').trim();
+const allowedOrigins = corsOrigin === '*' ? '*' : corsOrigin.split(',').map(o => o.trim()).filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins === '*' || (Array.isArray(allowedOrigins) && allowedOrigins.includes(origin))) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'), false);
+  },
+  credentials: true,
+}));
 app.use(morgan('combined', { stream: loggerStream }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

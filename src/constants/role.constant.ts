@@ -17,7 +17,7 @@ export const usersDefault = [
   {
     _id: '6604de8ae5068069a1bbb592',
     username: 'admin',
-    password: '$2b$10$40vlq7LOwZxDVaJzgSOIEuvbW4Idso1qC7q1EH1bE3m8pVoQa6B5i',
+    password: '$2a$12$1Pd71qAAxmMafUbTJxFZduVlGQDNOFXIFEF8/VYTmROrZJDritdmu',
     name: 'Admin',
     email: 'admin@gmail.com',
     role: '659ba7c62b611171a5347a97',
