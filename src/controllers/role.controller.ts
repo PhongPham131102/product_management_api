@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { Types } from "mongoose";
 import { StatusResponse } from "../common/status-response.common";
 import RoleService from "../services/role.service";
 import { HttpException } from "../exceptions/http-exception.exception";
