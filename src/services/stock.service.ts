@@ -234,29 +234,4 @@ export class StockService {
 
     }
 
-    async updateStockStatus() {
-
-        // Update all stock statuses based on current stock levels
-        const stocks = await Stock.find({ isDelete: false });
-
-        for (const stock of stocks) {
-            let newStatus: StockStatusEnum;
-
-            if (stock.stock === 0) {
-                newStatus = StockStatusEnum.OUT_OF_STOCK;
-            } else if (stock.stock <= stock.reorderLevel) {
-                newStatus = StockStatusEnum.LOW_STOCK;
-            } else {
-                newStatus = StockStatusEnum.NORMAL;
-            }
-
-            if (stock.status !== newStatus) {
-                stock.status = newStatus;
-                await stock.save();
-            }
-        }
-
-        this.logger.verbose('Stock statuses updated successfully');
-        return true;
-    }
 }

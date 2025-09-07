@@ -55,9 +55,5 @@ router.delete('/:id',
     (req, res) => stockController.deleteStock(req, res)
 );
 
-router.patch('/update-statuses',
-    authorization(SubjectEnum.STOCK, ActionEnum.UPDATE),
-    (req, res) => stockController.updateStockStatuses(req, res)
-);
 
 export default router;

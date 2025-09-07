@@ -187,20 +187,4 @@ export class StockController {
         }
     }
 
-    async updateStockStatuses(_req: Request, res: Response) {
-        try {
-            await this.stockService.updateStockStatus();
-
-            return res.json({
-                status: StatusResponse.SUCCESS,
-                message: 'Stock statuses updated successfully'
-            });
-        } catch (error: any) {
-            if (error instanceof HttpException) throw error
-            return res.status(error.status || 500).json({
-                status: StatusResponse.FAIL,
-                message: error.message || 'Internal server error'
-            });
-        }
-    }
 }
