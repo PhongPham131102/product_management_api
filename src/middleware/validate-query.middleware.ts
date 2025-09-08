@@ -3,7 +3,7 @@ import { validate } from "class-validator";
 import { Request, Response, NextFunction } from "express";
 
 export function validateQuery(dtoClass: any) {
-    return async (req: Request, res: Response, next: NextFunction) => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<any> => {
         try {
             const dtoObj: any = plainToInstance(dtoClass, req.query || {});
             const errors = await validate(dtoObj);

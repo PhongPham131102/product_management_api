@@ -278,8 +278,8 @@ export class ProductService {
         if (originalPrice !== undefined) productDoc.originalPrice = originalPrice;
         if (quantity !== undefined) productDoc.quantity = quantity;
         if (reorderLevel !== undefined) productDoc.reorderLevel = reorderLevel;
-        if (categories !== undefined) productDoc.categories = categories;
-        if (stock !== undefined) productDoc.stock = stock;
+        if (categories !== undefined) productDoc.categories = categories as any;
+        if (stock !== undefined) productDoc.stock = stock as any;
         if (imageUrl !== undefined) productDoc.imageUrl = imageUrl;
 
         // Recalculate status if quantity or reorderLevel changed

@@ -14,7 +14,7 @@ interface AuthRequest extends Request {
 export class PermissionController {
     private logger = new Logger('PermissionController');
 
-    async getAllPermissions(req: Request, res: Response) {
+    async getAllPermissions(_req: Request, res: Response) {
         try {
             const permissions = await Permission.find()
                 .populate('role', 'name');
@@ -89,14 +89,14 @@ export class PermissionController {
 
             this.logger.verbose(`Permission created for role: ${role.name}`);
 
-            res.status(201).json({
+            return res.status(201).json({
                 status: StatusResponse.SUCCESS,
                 message: 'Permission created successfully',
                 data: permission
             });
         } catch (error) {
             if (error instanceof HttpException) throw error
-            res.status(500).json({
+            return res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
             });
@@ -122,14 +122,14 @@ export class PermissionController {
 
             this.logger.verbose(`Permission updated: ${permission._id}`);
 
-            res.json({
+            return res.json({
                 status: StatusResponse.SUCCESS,
                 message: 'Permission updated successfully',
                 data: permission
             });
         } catch (error) {
             if (error instanceof HttpException) throw error
-            res.status(500).json({
+            return res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
             });
@@ -150,20 +150,20 @@ export class PermissionController {
 
             this.logger.verbose(`Permission deleted: ${id}`);
 
-            res.json({
+            return res.json({
                 status: StatusResponse.SUCCESS,
                 message: 'Permission deleted successfully'
             });
         } catch (error) {
             if (error instanceof HttpException) throw error
-            res.status(500).json({
+            return res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
             });
         }
     }
 
-    async getAvailableActions(req: Request, res: Response) {
+    async getAvailableActions(_req: Request, res: Response) {
         try {
             res.json({
                 status: StatusResponse.SUCCESS,
@@ -179,7 +179,7 @@ export class PermissionController {
         }
     }
 
-    async getAvailableSubjects(req: Request, res: Response) {
+    async getAvailableSubjects(_req: Request, res: Response) {
         try {
             res.json({
                 status: StatusResponse.SUCCESS,
@@ -199,7 +199,6 @@ export class PermissionController {
         try {
             const { role, permission } = req.body;
             const user = req.user;
-            const userIp = req.ip || req.connection.remoteAddress || 'Unknown';
 
             if (!role) {
                 return res.status(400).json({
@@ -217,11 +216,7 @@ export class PermissionController {
             }
 
             const newRole = await Role.create({ name: role });
-            let newData = `Tên role: ${newRole.name}\n`;
 
-            if (Object.entries(permission).length > 0) {
-                newData += `Với các quyền hạn cụ thể sau:\n`;
-            }
 
             const permissions = [];
             for (const [key, value] of Object.entries(permission)) {
@@ -232,7 +227,6 @@ export class PermissionController {
                         action: [ActionEnum.MANAGE],
                         subject: key,
                     });
-                    newData += `${subjectMapping[key as SubjectEnum] || key} : ${actionMapping['manage']}\n`;
                     permissions.push(_permission);
                 } else {
                     const _permission = await Permission.create({
@@ -240,29 +234,13 @@ export class PermissionController {
                         action: [...actionArray],
                         subject: key,
                     });
-                    newData += `${subjectMapping[key as SubjectEnum] || key} : ${actionArray.length > 0 ? actionArray.map((val: ActionEnum) => actionMapping[val] || val).join(', ') : '(Trống)'}\n`;
                     permissions.push(_permission);
                 }
             }
 
-            const currentDate = new Date().toLocaleString('vi-VN', {
-                timeZone: 'Asia/Ho_Chi_Minh',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-
-            const stringLog = `${user?.username} vừa tạo mới role và quyền hạn với các thông tin sau:\n${newData}\nVào lúc: <b>${currentDate}</b>\nIP người thực hiện: ${userIp}.`;
-
-            (req as any)['new-data'] = newData;
-            (req as any)['message-log'] = stringLog;
-
             this.logger.verbose(`Permission role created: ${newRole.name} by user: ${user?.username}`);
 
-            res.status(201).json({
+            return res.status(201).json({
                 status: StatusResponse.SUCCESS,
                 message: 'Create Permission Success',
                 data: {
@@ -272,7 +250,7 @@ export class PermissionController {
             });
         } catch (error) {
             if (error instanceof HttpException) throw error
-            res.status(500).json({
+            return res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
             });
@@ -384,7 +362,7 @@ export class PermissionController {
 
             this.logger.verbose(`Permission role updated: ${role.name} by user: ${user?.username}`);
 
-            res.json({
+            return res.json({
                 status: StatusResponse.SUCCESS,
                 message: 'Update Permission Success',
                 data: {
@@ -394,7 +372,7 @@ export class PermissionController {
             });
         } catch (error) {
             if (error instanceof HttpException) throw error
-            res.status(500).json({
+            return res.status(500).json({
                 status: StatusResponse.FAIL,
                 message: 'Internal server error'
             });

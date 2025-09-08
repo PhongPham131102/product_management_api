@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { StockService } from '../services/stock.service';
-import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
 import { CreateStockDto } from '../dto/stocks/create-stock.dto';
 import { UpdateStockDto } from '../dto/stocks/update-stock.dto';
@@ -8,7 +7,7 @@ import { StockQueryDto } from '../dto/stocks/stock-query.dto';
 import { HttpException } from '../exceptions/http-exception.exception';
 
 export class StockController {
-    private logger = new Logger('StockController');
+
     private stockService = new StockService();
 
     async getAllStocks(req: Request, res: Response) {

@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
-import { Role, RoleDocument } from "./role.model";
+import { RoleDocument } from "./role.model";
 
 export interface IUser extends Document {
   _id: mongoose.Types.ObjectId;

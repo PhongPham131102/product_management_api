@@ -91,7 +91,7 @@ export class RoleController {
     }
   }
 
-  async getAll(req: Request, res: Response) {
+  async getAll(_req: Request, res: Response) {
     try {
       const roles = await this.service.getAllRoles();
       return res.json({

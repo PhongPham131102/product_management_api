@@ -15,7 +15,7 @@ export const authenticateToken = async (
     req: AuthRequest,
     res: Response,
     next: NextFunction
-) => {
+): Promise<any> => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN

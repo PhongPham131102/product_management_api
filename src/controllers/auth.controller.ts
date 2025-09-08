@@ -1,11 +1,9 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth.service';
-import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
 import { HttpException } from '../exceptions/http-exception.exception';
 
 export class AuthController {
-    private logger = new Logger('AuthController');
     private authService = new AuthService();
 
     async register(req: Request, res: Response) {

@@ -6,7 +6,6 @@ import { UpdateProductDto } from '../dto/products/update-product.dto';
 import { ProductQueryDto } from '../dto/products/product-query.dto';
 import { HttpException } from '../exceptions/http-exception.exception';
 import { getFileUrl } from '../middleware/upload.middleware';
-import { ProductStatusEnum } from '../models/product.model';
 
 export class ProductController {
     private productService = new ProductService();

@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { CategoryService } from '../services/category.service';
-import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
 import { CreateCategoryDto } from '../dto/categories/create-category.dto';
 import { UpdateCategoryDto } from '../dto/categories/update-category.dto';
@@ -8,7 +7,6 @@ import { CategoryQueryDto } from '../dto/categories/category-query.dto';
 import { HttpException } from '../exceptions/http-exception.exception';
 
 export class CategoryController {
-    private logger = new Logger('CategoryController');
     private categoryService = new CategoryService();
 
     async getAllCategories(req: Request, res: Response) {

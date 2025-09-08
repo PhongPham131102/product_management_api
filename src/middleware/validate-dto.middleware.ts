@@ -3,7 +3,7 @@ import { validate } from "class-validator";
 import { Request, Response, NextFunction } from "express";
 
 export function validateDto(dtoClass: any) {
-    return async (req: Request, res: Response, next: NextFunction) => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<any> => {
         try {
             // Sử dụng plainToInstance với cấu hình đơn giản
             const dtoObj = plainToInstance(dtoClass, req.body || {});

@@ -6,7 +6,7 @@ import { HttpException } from "../exceptions/http-exception.exception";
 import { StatusResponse } from "../common/status-response.common";
 
 
-export function errorMiddleware(err: Error, req: Request, res: Response, next: NextFunction) {
+export function errorMiddleware(err: Error, _req: Request, res: Response, _next: NextFunction) {
   if (err instanceof HttpException) {
     return res.status(err.status).json({
       status: err.status,
