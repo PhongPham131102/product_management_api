@@ -54,10 +54,28 @@ export class UserController {
         }
     }
 
+    async createUser(req: Request, res: Response) {
+        try {
+            const userData = await this.userService.createUser(req.body);
+            res.status(201).json({
+                status: StatusResponse.SUCCESS,
+                message: 'User created successfully',
+                data: userData
+            });
+            return;
+        } catch (error: any) {
+            if (error instanceof HttpException) throw error
+            return res.status(error.status || 500).json({
+                status: StatusResponse.FAIL,
+                message: error.message || 'Internal server error'
+            });
+        }
+    }
+
     async updateUser(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            const { name, email } = req.body;
+            const updateData = req.body;
 
             if (!id) {
                 res.status(400).json({
@@ -67,7 +85,7 @@ export class UserController {
                 return;
             }
 
-            const userData = await this.userService.updateUser(id, { name, email });
+            const userData = await this.userService.updateUser(id, updateData);
 
             res.json({
                 status: StatusResponse.SUCCESS,

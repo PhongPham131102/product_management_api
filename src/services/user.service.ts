@@ -1,7 +1,10 @@
 import { Types } from 'mongoose';
 import { User, UserDocument } from '../models/user.model';
+import { Role } from '../models/role.model';
 import { Logger } from '../utils/logger.util';
 import { PermissionService } from './permission.service';
+import { HttpException } from '../exceptions/http-exception.exception';
+import { StatusResponse } from '../common/status-response.common';
 const permissionService = new PermissionService()
 export class UserService {
     private logger = new Logger('UserService');
@@ -125,6 +128,17 @@ export class UserService {
                 user.password = await bcrypt.hash(password, 12);
             }
             if (role) {
+                // Check if role exists
+
+                const roleExists = await Role.findOne({ _id: new Types.ObjectId(role) });
+                console.log("roleExists: ", roleExists)
+                if (!roleExists) {
+                    throw new HttpException({
+                        status: 400,
+                        error_code: StatusResponse.ROLE_BY_ID_NOT_FOUND,
+                        message: 'Role not found'
+                    });
+                }
                 user.role = new Types.ObjectId(role) as any;
             }
             await user.save();
@@ -183,6 +197,67 @@ export class UserService {
             throw error;
         }
     }
+    async createUser(userData: { username: string; password: string; name: string; email?: string; role?: string }) {
+        try {
+            const { username, password, name, email, role } = userData;
+
+            // Check if username already exists
+            const existingUser = await User.findOne({ username, isDelete: false });
+            if (existingUser) {
+                throw {
+                    status: 400,
+                    message: 'Username already exists'
+                };
+            }
+
+            // Check if email already exists (if provided)
+            if (email) {
+                const existingEmail = await User.findOne({ email, isDelete: false });
+                if (existingEmail) {
+                    throw {
+                        status: 400,
+                        message: 'Email already exists'
+                    };
+                }
+            }
+
+            // Check if role exists (if provided)
+            if (role) {
+                const roleExists = await Role.findOne({ _id: new Types.ObjectId(role) });
+                console.log("roleExists: ", roleExists)
+                if (!roleExists) {
+                    throw new HttpException({
+                        status: 400,
+                        error_code: StatusResponse.ROLE_BY_ID_NOT_FOUND,
+                        message: 'Role not found'
+                    });
+                }
+            }
+
+            const bcrypt = await import('bcryptjs');
+            const hashedPassword = await bcrypt.hash(password, 12);
+
+            const user = await User.create({
+                username,
+                password: hashedPassword,
+                name,
+                email: email || '',
+                role: role ? new Types.ObjectId(role) : undefined
+            });
+
+            this.logger.verbose(`User created: ${user.username}`);
+
+            return {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                name: user.name
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async getUserByIdAuthGuard(id: string) {
         if (!id) {
             return null;
