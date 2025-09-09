@@ -125,7 +125,7 @@ export class UserService {
             if (username !== undefined) user.username = username;
             if (password) {
                 const bcrypt = await import('bcryptjs');
-                user.password = await bcrypt.hash(password, 12);
+                user.password = await bcrypt.hash(password, 10);
             }
             if (role) {
                 // Check if role exists
@@ -235,7 +235,7 @@ export class UserService {
             }
 
             const bcrypt = await import('bcryptjs');
-            const hashedPassword = await bcrypt.hash(password, 12);
+            const hashedPassword = await bcrypt.hash(password, 10);
 
             const user = await User.create({
                 username,

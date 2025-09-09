@@ -49,7 +49,7 @@ export class InitDataService {
             for (const userData of usersDefault) {
                 const existingUser = await User.findById(userData._id);
                 if (!existingUser) {
-                    const hashedPassword = await bcrypt.hash(userData.password, 12);
+                    const hashedPassword = await bcrypt.hash(userData.password, 10);
                     await User.create({
                         ...userData,
                         password: hashedPassword
