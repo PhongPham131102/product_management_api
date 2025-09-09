@@ -4,12 +4,10 @@ import { User } from '../models/user.model';
 import { Role } from '../models/role.model';
 import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
-import { UserService } from './user.service';
 import { PermissionService } from './permission.service';
 
 export class AuthService {
     private logger = new Logger('AuthService');
-    private userService = new UserService();
     private permissionService = new PermissionService();
 
     async registerUser(userData: { email: string; password: string; username: string; name: string }) {
