@@ -4,9 +4,13 @@ import { User } from '../models/user.model';
 import { Role } from '../models/role.model';
 import { Logger } from '../utils/logger.util';
 import { StatusResponse } from '../common/status-response.common';
+import { UserService } from './user.service';
+import { PermissionService } from './permission.service';
 
 export class AuthService {
     private logger = new Logger('AuthService');
+    private userService = new UserService();
+    private permissionService = new PermissionService();
 
     async registerUser(userData: { email: string; password: string; username: string; name: string }) {
         try {
@@ -92,6 +96,9 @@ export class AuthService {
                     message: 'Customer role is not allowed to login'
                 };
             }
+
+            const permission = await this.permissionService.getPermissionByRole(user?.role?.id);
+
             // Generate tokens
             const accessToken = jwt.sign(
                 { userId: user._id, role: (user.role as any).name },
@@ -114,6 +121,8 @@ export class AuthService {
             return {
                 accessToken,
                 refreshToken,
+                role: user?.role,
+                permission,
                 user: {
                     id: user._id,
                     username: user.username,
