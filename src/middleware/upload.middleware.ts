@@ -101,7 +101,5 @@ export const uploadMultiple = (fieldName: string, maxCount: number = 5) => {
 
 // Helper function to get file URL
 export const getFileUrl = (req: Request, filename: string): string => {
-    const protocol = req.protocol;
-    const host = req.get('host');
-    return `${protocol}://${host}/uploads/products/${filename}`;
+    return `https://api.product-manager.store/uploads/products/${filename}`;
 };
