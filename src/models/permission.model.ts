@@ -12,7 +12,6 @@ export enum ActionEnum {
 export enum SubjectEnum {
   ALL = "all",
   USER = "user",
-  VIDEO = "video",
   ROLE = "role",
   LOG = "log",
   STOCK = "stock",

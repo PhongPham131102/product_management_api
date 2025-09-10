@@ -36,8 +36,7 @@ export class PermissionController {
     async getPermissionsByRole(req: Request, res: Response) {
         try {
             const { roleId } = req.params;
-            const permissions = await Permission.find({ role: roleId })
-                .populate('role', 'name');
+            const permissions = await Permission.find({ role: new Types.ObjectId(roleId) })
 
             res.json({
                 status: StatusResponse.SUCCESS,

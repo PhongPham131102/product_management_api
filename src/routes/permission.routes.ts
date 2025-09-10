@@ -13,11 +13,11 @@ const permissionController = new PermissionController();
 
 // Protected routes (admin only)
 router.get('/', authenticateToken, (req, res) => permissionController.getAllPermissions(req, res));
-router.get('/get-all-by-role-id/:id', authenticateToken, (req, res) => permissionController.getPermissionsByRoleId(req, res));
+router.get('/get-all-by-role-id/:roleId', authenticateToken, (req, res) => permissionController.getPermissionsByRole(req, res));
 router.get('/role/:roleId', authenticateToken, (req, res) => permissionController.getPermissionsByRole(req, res));
 router.post('/', authenticateToken, validateDto(CreatePermissionDto), (req, res) => permissionController.createPermission(req, res));
 router.post('/create-permission', authenticateToken, authorization(SubjectEnum.ROLE, ActionEnum.CREATE), validateDto(CreatePermissionRoleDto), (req, res) => permissionController.createPermissionRole(req, res));
-router.put('/update-permission-by-role-id/:id', authenticateToken, validateDto(UpdatePermissionRoleDto), (req, res) => permissionController.updatePermissionsByRoleId(req, res));
+router.put('/update-permission-by-role-id/:id', authenticateToken, validateDto(UpdatePermissionRoleDto), (req, res) => permissionController.updatePermissionByRoleId(req, res));
 router.put('/:id', authenticateToken, validateDto(UpdatePermissionDto), (req, res) => permissionController.updatePermission(req, res));
 router.delete('/:id', authenticateToken, (req, res) => permissionController.deletePermission(req, res));
 
