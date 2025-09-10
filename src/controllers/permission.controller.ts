@@ -51,7 +51,23 @@ export class PermissionController {
             });
         }
     }
-
+    async deletePermissionByRoleId(req: Request, res: Response) {
+        try {
+            const { roleId } = req.params;
+            await Permission.deleteMany({ role: new Types.ObjectId(roleId) });
+            await Role.findByIdAndDelete(new Types.ObjectId(roleId));
+            res.json({
+                status: StatusResponse.SUCCESS,
+                message: 'Permission deleted successfully'
+            });
+        } catch (error) {
+            if (error instanceof HttpException) throw error
+            res.status(500).json({
+                status: StatusResponse.FAIL,
+                message: 'Internal server error'
+            });
+        }
+    }
     async createPermission(req: Request, res: Response) {
         try {
             const { roleId, action, subject } = req.body;

@@ -19,6 +19,7 @@ router.post('/', authenticateToken, validateDto(CreatePermissionDto), (req, res)
 router.post('/create-permission', authenticateToken, authorization(SubjectEnum.ROLE, ActionEnum.CREATE), validateDto(CreatePermissionRoleDto), (req, res) => permissionController.createPermissionRole(req, res));
 router.put('/update-permission-by-role-id/:id', authenticateToken, validateDto(UpdatePermissionRoleDto), (req, res) => permissionController.updatePermissionByRoleId(req, res));
 router.put('/:id', authenticateToken, validateDto(UpdatePermissionDto), (req, res) => permissionController.updatePermission(req, res));
+router.delete('/delete-by-role-id/:roleId', authenticateToken, (req, res) => permissionController.deletePermissionByRoleId(req, res));
 router.delete('/:id', authenticateToken, (req, res) => permissionController.deletePermission(req, res));
 
 export default router;
